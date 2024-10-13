@@ -1,3 +1,10 @@
-# proyecto_ia
+# Proyecto IA
 
-A new Flutter project.
+## Integrantes
+
+
+
+
+
+## Descripción del proyecto
+
