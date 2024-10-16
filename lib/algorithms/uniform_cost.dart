@@ -47,11 +47,9 @@ class UniformCost implements SearchAlgorithm<Node> {
   @override
   Future<Node?> search(Future<void> Function(Node) renderNode) async {
     PriorityQueue<Node> queue = PriorityQueue<Node>();
-    Set<String> visited = {};
 
     Node initialNode = Node(startX, startY, 0);
     queue.add(initialNode);
-    await renderNode(initialNode);
 
     while (queue.isNotEmpty) {
       Node current = queue.removeFirst();
@@ -61,22 +59,15 @@ class UniformCost implements SearchAlgorithm<Node> {
         return current;
       }
 
-      visited.add('${current.x},${current.y}');
-
       for (var advance in advanceOrders) {
         int newX = current.x + advance[0];
         int newY = current.y + advance[1];
         int newCost = current.cost + 1;
-
-        if (isValid(newX, newY, board) && !visited.contains('$newX,$newY')) {
+        bool isGrandFather =
+            current.father?.x == newX && current.father?.y == newY;
+        if (isValid(newX, newY, board) && !isGrandFather) {
           Node neighbor = Node(newX, newY, newCost, current);
           queue.add(neighbor);
-
-          if (neighbor.x == goalX && neighbor.y == goalY) {
-            await renderNode(neighbor);
-            return neighbor;
-          }
-
           await renderNode(neighbor);
         }
       }

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:graphview/GraphView.dart';
 import 'package:proyecto_ia/algorithms/greedy_search.dart' as greedy_search;
+//import 'package:proyecto_ia/algorithms/uniform_cost.dart' as uniform_cost;
 
 class TreeView extends StatefulWidget {
   const TreeView(
@@ -24,7 +25,10 @@ class TreeView extends StatefulWidget {
 }
 
 class _TreeViewState extends State<TreeView> {
+  //late uniform_cost.UniformCost algorithm;
   late greedy_search.GreedySearch algorithm;
+  late Future executionSearch;
+  //final streamController = StreamController<uniform_cost.Node>();
   final streamController = StreamController<greedy_search.Node>();
   final Graph graph = Graph()..isTree = true;
   final BuchheimWalkerConfiguration builder = BuchheimWalkerConfiguration();
@@ -33,6 +37,7 @@ class _TreeViewState extends State<TreeView> {
     ..strokeWidth = 1
     ..style = PaintingStyle.stroke;
 
+  //Future<void> renderNode(uniform_cost.Node node) async {
   Future<void> renderNode(greedy_search.Node node) async {
     await Future.delayed(Duration(milliseconds: 1000));
 
@@ -50,6 +55,7 @@ class _TreeViewState extends State<TreeView> {
   void initState() {
     super.initState();
     algorithm = greedy_search.GreedySearch(
+      // algorithm = uniform_cost.UniformCost(
       board: widget.board,
       advanceOrders: widget.advanceOrder,
       startX: widget.startX,
@@ -58,7 +64,7 @@ class _TreeViewState extends State<TreeView> {
       goalY: widget.goalY,
     );
 
-    algorithm.search(renderNode);
+    executionSearch = algorithm.search(renderNode);
 
     builder
       ..siblingSeparation = (50)
@@ -68,8 +74,16 @@ class _TreeViewState extends State<TreeView> {
   }
 
   @override
+  void dispose() {
+    executionSearch.ignore();
+    streamController.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return StreamBuilder<greedy_search.Node>(
+        // return StreamBuilder<uniform_cost.Node>(
         stream: streamController.stream,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -93,6 +107,7 @@ class _TreeViewState extends State<TreeView> {
                   BuchheimWalkerAlgorithm(builder, TreeEdgeRenderer(builder)),
               paint: paint,
               builder: (Node node) {
+                //  final value = node.key?.value as uniform_cost.Node;
                 final value = node.key?.value as greedy_search.Node;
                 return nodeWidget(value,
                     isRoot: value.father == null,
@@ -105,7 +120,9 @@ class _TreeViewState extends State<TreeView> {
   }
 
   Widget nodeWidget(greedy_search.Node node,
-      {bool isRoot = false, bool isGoal = false}) {
+      // Widget nodeWidget(uniform_cost.Node node,
+      {bool isRoot = false,
+      bool isGoal = false}) {
     final color = isRoot
         ? Colors.green.shade100
         : isGoal
