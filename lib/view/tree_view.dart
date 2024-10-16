@@ -69,39 +69,39 @@ class _TreeViewState extends State<TreeView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: InteractiveViewer(
+    return StreamBuilder<greedy_search.Node>(
+        stream: streamController.stream,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          }
+
+          return InteractiveViewer(
             constrained: false,
-            boundaryMargin: EdgeInsets.all(100),
+            boundaryMargin: EdgeInsets.all(10),
             minScale: 0.01,
             maxScale: 5.6,
-            child: StreamBuilder<greedy_search.Node>(
-                stream: streamController.stream,
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return CircularProgressIndicator();
-                  }
-
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text('Error: ${snapshot.error}'),
-                    );
-                  }
-
-                  return GraphView(
-                    graph: graph,
-                    algorithm: BuchheimWalkerAlgorithm(
-                        builder, TreeEdgeRenderer(builder)),
-                    paint: paint,
-                    builder: (Node node) {
-                      final value = node.key?.value as greedy_search.Node;
-                      return nodeWidget(value,
-                          isRoot: value.father == null,
-                          isGoal: value.x == algorithm.goalX &&
-                              value.y == algorithm.goalY);
-                    },
-                  );
-                })));
+            child: GraphView(
+              graph: graph,
+              algorithm:
+                  BuchheimWalkerAlgorithm(builder, TreeEdgeRenderer(builder)),
+              paint: paint,
+              builder: (Node node) {
+                final value = node.key?.value as greedy_search.Node;
+                return nodeWidget(value,
+                    isRoot: value.father == null,
+                    isGoal: value.x == algorithm.goalX &&
+                        value.y == algorithm.goalY);
+              },
+            ),
+          );
+        });
   }
 
   Widget nodeWidget(greedy_search.Node node,
