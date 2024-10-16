@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:graphview/GraphView.dart';
 import 'algorithms/uniform_cost.dart' as uniform_cost;
+import 'algorithms/greedy_search.dart' as greedy_search;
 
 void main() {
   runApp(MyApp());
@@ -24,8 +25,8 @@ class TreeViewPage extends StatefulWidget {
 }
 
 class _TreeViewPageState extends State<TreeViewPage> {
-  late uniform_cost.UniformCost algorithm;
-  final streamController = StreamController<uniform_cost.Node>();
+  late greedy_search.GreedySearch algorithm;
+  final streamController = StreamController<greedy_search.Node>();
   final Graph graph = Graph()..isTree = true;
   final BuchheimWalkerConfiguration builder = BuchheimWalkerConfiguration();
   final paint = Paint()
@@ -33,8 +34,8 @@ class _TreeViewPageState extends State<TreeViewPage> {
     ..strokeWidth = 1
     ..style = PaintingStyle.stroke;
 
-  Future<void> renderNode(uniform_cost.Node node) async {
-    await Future.delayed(Duration(milliseconds: 500));
+  Future<void> renderNode(greedy_search.Node node) async {
+    await Future.delayed(Duration(milliseconds: 1000));
 
     if (node.father == null) {
       graph.addNode(Node.Id(node));
@@ -49,7 +50,7 @@ class _TreeViewPageState extends State<TreeViewPage> {
   @override
   void initState() {
     super.initState();
-    algorithm = uniform_cost.UniformCost(
+    algorithm = greedy_search.GreedySearch(
       board: [
         [0, 0, 0, 0],
         [0, 1, 1, 0],
@@ -85,7 +86,7 @@ class _TreeViewPageState extends State<TreeViewPage> {
             boundaryMargin: EdgeInsets.all(100),
             minScale: 0.01,
             maxScale: 5.6,
-            child: StreamBuilder<uniform_cost.Node>(
+            child: StreamBuilder<greedy_search.Node>(
                 stream: streamController.stream,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
@@ -104,7 +105,7 @@ class _TreeViewPageState extends State<TreeViewPage> {
                         builder, TreeEdgeRenderer(builder)),
                     paint: paint,
                     builder: (Node node) {
-                      final value = node.key?.value as uniform_cost.Node;
+                      final value = node.key?.value as greedy_search.Node;
                       return nodeWidget(value,
                           isRoot: value.father == null,
                           isGoal: value.x == algorithm.goalX &&
@@ -114,7 +115,7 @@ class _TreeViewPageState extends State<TreeViewPage> {
                 })));
   }
 
-  Widget nodeWidget(uniform_cost.Node node,
+  Widget nodeWidget(greedy_search.Node node,
       {bool isRoot = false, bool isGoal = false}) {
     final color = isRoot
         ? Colors.green.shade100
