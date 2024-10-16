@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_ia/models/cell.dart';
+import 'package:proyecto_ia/screens/search_algorithm_screen.dart';
 import 'package:proyecto_ia/widgets/config_board.dart';
 import 'package:proyecto_ia/widgets/custom_button.dart';
 import 'package:proyecto_ia/widgets/dragable_grid.dart';
@@ -108,7 +109,18 @@ class ConfigScreen extends StatelessWidget {
                             board[element.row][element.column] = 1;
                           }
 
-                          print('board: $board');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SearchAlgorithmScreen(
+                                board: board,
+                                startX: initialPositionNotifier.value!.row,
+                                startY: initialPositionNotifier.value!.column,
+                                goalX: goalPositionNotifier.value!.row,
+                                goalY: goalPositionNotifier.value!.column,
+                              ),
+                            ),
+                          );
                         }),
                     SizedBox(height: 100)
                   ],
