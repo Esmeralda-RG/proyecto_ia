@@ -12,7 +12,14 @@ class Node implements Comparable<Node> {
 
   @override
   int compareTo(Node other){
-    return cost.compareTo(other.cost);
+    int comparison = x.compareTo(other.x);
+    if (comparison != 0) {
+      return comparison;
+    }
+    if (x != other.x){
+      x.compareTo(other.x);
+    }
+    return y.compareTo(other.y);
   }
 
   @override
