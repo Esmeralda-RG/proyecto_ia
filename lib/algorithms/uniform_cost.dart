@@ -7,18 +7,16 @@ class Node implements Comparable<Node> {
   final int x, y;
   final int cost;
   final Node? father;
-  final int index; // Nuevo campo para mantener el orden de inserción
+  final int index;
 
   Node(this.x, this.y, this.cost, this.index, [this.father]);
 
   @override
   int compareTo(Node other) {
     int costComparison = cost.compareTo(other.cost);
-
     if (costComparison == 0) {
       return index.compareTo(other.index);
     }
-
     return costComparison;
   }
 
@@ -43,7 +41,6 @@ class UniformCost implements SearchAlgorithm<Node> {
   @override
   Future<Node?> search(Future<void> Function(Node) renderNode) async {
     PriorityQueue<Node> queue = PriorityQueue<Node>();
-
     Node initialNode = Node(startX, startY, 0, currentIndex++);
     queue.add(initialNode);
 
