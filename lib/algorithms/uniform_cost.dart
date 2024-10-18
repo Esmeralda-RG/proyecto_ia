@@ -28,7 +28,7 @@ class UniformCost implements SearchAlgorithm<Node> {
   final List<List<int>> board;
   final List<List<int>> advanceOrders;
   final int startX, startY, goalX, goalY;
-  int currentIndex = 0; // Contador para mantener el orden de inserción
+  int currentIndex = 0;
 
   UniformCost(
       {required this.board,
