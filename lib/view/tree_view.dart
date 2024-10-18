@@ -28,8 +28,8 @@ class _TreeViewState extends State<TreeView> {
   //late uniform_cost.UniformCost algorithm;
   late greedy_search.GreedySearch algorithm;
   late Future executionSearch;
-  //final streamController = StreamController<uniform_cost.Node>();
-  final streamController = StreamController<greedy_search.Node>();
+  //final streamController = StreamController<bool>();
+  final streamController = StreamController<bool>();
   final Graph graph = Graph()..isTree = true;
   final BuchheimWalkerConfiguration builder = BuchheimWalkerConfiguration();
   final paint = Paint()
@@ -37,9 +37,13 @@ class _TreeViewState extends State<TreeView> {
     ..strokeWidth = 1
     ..style = PaintingStyle.stroke;
 
-  //Future<void> renderNode(uniform_cost.Node node) async {
-  Future<void> renderNode(greedy_search.Node node) async {
-    await Future.delayed(Duration(milliseconds: 1000));
+  int xGoalParent = -1;
+  int yGoalParent = -1;
+
+  //Future<void> renderNode(uniform_cost.Node node, [bool isGoal = false]) async {
+  Future<void> renderNode(greedy_search.Node node,
+      [bool isGoal = false]) async {
+    await Future.delayed(Duration(seconds: 1));
 
     if (node.father == null) {
       graph.addNode(Node.Id(node));
@@ -48,14 +52,18 @@ class _TreeViewState extends State<TreeView> {
       final parent = Node.Id(node.father);
       graph.addEdge(parent, child);
     }
-    streamController.add(node);
+    if (isGoal) {
+      xGoalParent = node.father?.x ?? -1;
+      yGoalParent = node.father?.y ?? -1;
+    }
+    streamController.add(isGoal);
   }
 
   @override
   void initState() {
     super.initState();
     algorithm = greedy_search.GreedySearch(
-      // algorithm = uniform_cost.UniformCost(
+      //algorithm = uniform_cost.UniformCost(
       board: widget.board,
       advanceOrders: widget.advanceOrder,
       startX: widget.startX,
@@ -82,8 +90,8 @@ class _TreeViewState extends State<TreeView> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<greedy_search.Node>(
-        // return StreamBuilder<uniform_cost.Node>(
+    return StreamBuilder<bool>(
+        //return StreamBuilder<bool>(
         stream: streamController.stream,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -99,20 +107,20 @@ class _TreeViewState extends State<TreeView> {
           return InteractiveViewer(
             constrained: false,
             boundaryMargin: EdgeInsets.all(10),
-            minScale: 0.01,
-            maxScale: 5.6,
+            scaleEnabled: false,
             child: GraphView(
               graph: graph,
               algorithm:
                   BuchheimWalkerAlgorithm(builder, TreeEdgeRenderer(builder)),
               paint: paint,
               builder: (Node node) {
-                //  final value = node.key?.value as uniform_cost.Node;
+                // final value = node.key?.value as uniform_cost.Node;
                 final value = node.key?.value as greedy_search.Node;
                 return nodeWidget(value,
                     isRoot: value.father == null,
-                    isGoal: value.x == algorithm.goalX &&
-                        value.y == algorithm.goalY);
+                    isGoal: (snapshot.data ?? false) &&
+                        (value.father?.x == xGoalParent &&
+                            value.father?.y == yGoalParent));
               },
             ),
           );
@@ -129,11 +137,24 @@ class _TreeViewState extends State<TreeView> {
             ? Colors.red.shade100
             : Colors.blue.shade100;
 
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration:
-          BoxDecoration(borderRadius: BorderRadius.circular(4), color: color),
-      child: Text(node.toString()),
+    return Stack(
+      children: [
+        Container(
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4), color: color),
+          child: Text(node.toString()),
+        ),
+        if (isGoal)
+          Positioned(
+            top: -10,
+            right: 0,
+            child: Icon(
+              Icons.flag,
+              color: Colors.red,
+            ),
+          ),
+      ],
     );
   }
 }
