@@ -39,7 +39,7 @@ class UniformCost implements SearchAlgorithm<Node> {
       required this.goalY});
 
   @override
-  Future<Node?> search(Future<void> Function(Node) renderNode) async {
+  Future<Node?> search(Future<void> Function(Node, [bool]) renderNode) async {
     PriorityQueue<Node> queue = PriorityQueue<Node>();
     Node initialNode = Node(startX, startY, 0, currentIndex++);
     queue.add(initialNode);
@@ -48,7 +48,7 @@ class UniformCost implements SearchAlgorithm<Node> {
       Node current = queue.removeFirst();
 
       if (current.x == goalX && current.y == goalY) {
-        await renderNode(current);
+        await renderNode(current, true);
         return current;
       }
 
