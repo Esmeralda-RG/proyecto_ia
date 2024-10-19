@@ -36,29 +36,37 @@ class DepthFirstSearch implements SearchAlgorithm<Node> {
     while (stack.isNotEmpty && !foundGoal) {
       Node current = stack.removeLast();
 
-      await renderNode(current);
+      // Renderizar el nodo actual
+      await renderNode(current);  
 
       if (current.x == goalX && current.y == goalY) {
         foundGoal = true;
-        await renderNode(current, true); // Marcar meta
+        await renderNode(current, true); // Marcar nodo como meta
         return current;
       }
 
       // Expandir los vecinos en orden inverso
+      List<Node> neighbors = [];
       for (var i = advanceOrders.length - 1; i >= 0; i--) {
         var advance = advanceOrders[i];
         int newX = current.x + advance[0];
         int newY = current.y + advance[1];
-        bool isGrandparent =
-            current.father?.x == newX && current.father?.y == newY;
+        bool isGrandparent = current.father?.x == newX && current.father?.y == newY;
 
         if (isValid(newX, newY, board) && !isGrandparent) {
           Node neighbor = Node(newX, newY, currentIndex++, current);
-          stack.add(neighbor);
-          await renderNode(neighbor);
+          neighbors.add(neighbor);
         }
-        //print('Vecino generado: ($newX, $newY)');
-        //print('Pila actual: $stack');
+      }
+
+      // Agregar los vecinos a la pila en orden inverso
+      for (var neighbor in neighbors) {
+        stack.add(neighbor);
+      }
+
+      // Orden normal para la visualización de nodos
+      for (var neighbor in neighbors.reversed) {
+        await renderNode(neighbor);
       }
     }
 
@@ -66,11 +74,7 @@ class DepthFirstSearch implements SearchAlgorithm<Node> {
   }
 
   bool isValid(int x, int y, List<List<int>> board) {
-    return x >= 0 &&
-        x < board.length &&
-        y >= 0 &&
-        y < board[0].length &&
-        board[x][y] != 1; // '1'  (Obstáculo)
+    return x >= 0 && x < board.length && y >= 0 && y < board[0].length && board[x][y] != 1;
   }
 
   String getPath(Node? node) {

@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:graphview/GraphView.dart';
 //import 'package:proyecto_ia/algorithms/greedy_search.dart' as greedy_search;
 //import 'package:proyecto_ia/algorithms/uniform_cost.dart' as uniform_cost;
-import 'package:proyecto_ia/algorithms/depth_first_search.dart'
-    as depth_first_search;
+import 'package:proyecto_ia/algorithms/depth_first_search.dart'as depth_first_search;
 
 class TreeView extends StatefulWidget {
   const TreeView(
@@ -43,8 +42,7 @@ class _TreeViewState extends State<TreeView> {
   int yGoalParent = -1;
 
   //Future<void> renderNode(uniform_cost.Node node, [bool isGoal = false]) async {
-  Future<void> renderNode(depth_first_search.Node node,
-      [bool isGoal = false]) async {
+  Future<void> renderNode(depth_first_search.Node node, [bool isGoal = false]) async {
     //print('Renderizando nodo: (${node.x}, ${node.y})');
     await Future.delayed(Duration(seconds: 1));
 
@@ -119,7 +117,7 @@ class _TreeViewState extends State<TreeView> {
                   BuchheimWalkerAlgorithm(builder, TreeEdgeRenderer(builder)),
               paint: paint,
               builder: (Node node) {
-                // final value = node.key?.value as uniform_cost.Node;
+                //final value = node.key?.value as uniform_cost.Node;
                 final value = node.key?.value as depth_first_search.Node;
                 return nodeWidget(value,
                     isRoot: value.father == null,
@@ -132,7 +130,7 @@ class _TreeViewState extends State<TreeView> {
   }
 
   Widget nodeWidget(depth_first_search.Node node,
-      // Widget nodeWidget(uniform_cost.Node node,
+  //Widget nodeWidget(uniform_cost.Node node,
       {bool isRoot = false,
       bool isGoal = false}) {
     final color = isRoot
