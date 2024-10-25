@@ -5,35 +5,29 @@ class Node implements Comparable<Node> {
   final int x, y;
   final int cost;
   final Node? father;
-  final int level;
-  final int orderInLevel;
+  final int index;
 
-  Node(this.x, this.y, this.cost, this.level, this.orderInLevel, [this.father]);
+  Node(this.x, this.y, this.cost, this.index, [this.father]);
 
   @override
   int compareTo(Node other) {
     int costComparison = cost.compareTo(other.cost);
     if (costComparison == 0) {
-      if (level != other.level && orderInLevel == other.orderInLevel) {
-        return level.compareTo(other.level);
-      } else {
-        return orderInLevel.compareTo(other.orderInLevel);
-      }
+      return index.compareTo(other.index);
     }
     return costComparison;
   }
 
   @override
   String toString() =>
-      '($x, $y) -> Costo: $cost, Nivel: $level, Orden: $orderInLevel';
+      '($x, $y) -> Costo: $cost';
 }
 
 class GreedySearch implements SearchAlgorithm<Node> {
   final List<List<int>> board;
   final List<List<int>> advanceOrders;
   final int startX, startY, goalX, goalY;
-  int orderCounter = 0;
-  Map<int, int> levelOrderCounter = {};
+  int currentIndex = 0;
 
   GreedySearch(
       {required this.board,
@@ -47,12 +41,13 @@ class GreedySearch implements SearchAlgorithm<Node> {
   Future<Node?> search(Future<void> Function(Node, [bool]) renderNode) async {
     PriorityQueue<Node> queue = PriorityQueue<Node>();
     Set<String> visited = {};
-    Node initialNode = Node(startX, startY, 0, 0, orderCounter++);
+    Node initialNode = Node(startX, startY, 0, currentIndex++);
     queue.add(initialNode);
     await renderNode(initialNode);
 
     while (queue.isNotEmpty) {
       Node current = queue.removeFirst();
+
       if (current.x == goalX && current.y == goalY) {
         await renderNode(current, true);
         return current;
@@ -69,11 +64,8 @@ class GreedySearch implements SearchAlgorithm<Node> {
         }
         if (isValid(newX, newY, board)) {
           int heuristic = manhattanDistance(newX, newY, goalX, goalY);
-          int level = current.level + 1;
-          int orderInLevel = levelOrderCounter
-              .update(level, (value) => value + 1, ifAbsent: () => 0);
           Node neighbor =
-              Node(newX, newY, heuristic, level, orderInLevel, current);
+              Node(newX, newY, heuristic, currentIndex++, current);
           queue.add(neighbor);
           await renderNode(neighbor);
         }
