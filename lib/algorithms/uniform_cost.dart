@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:collection/collection.dart' show PriorityQueue;
 import 'package:proyecto_ia/algorithms/search_algorithm.dart';
 
@@ -43,7 +41,7 @@ class UniformCost implements SearchAlgorithm<Node> {
     PriorityQueue<Node> queue = PriorityQueue<Node>();
     Node initialNode = Node(startX, startY, 0, currentIndex++);
     queue.add(initialNode);
-
+    await renderNode(initialNode);
     while (queue.isNotEmpty) {
       Node current = queue.removeFirst();
 

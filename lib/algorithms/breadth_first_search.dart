@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'dart:collection/collection.dart' show Queue;
 import 'package:proyecto_ia/algorithms/search_algorithm.dart';
 
 class Node {
@@ -17,7 +17,6 @@ class BreadthFirstSearch implements SearchAlgorithm<Node> {
   final List<List<int>> advanceOrders;
   final int startX, startY, goalX, goalY;
   int currentIndex = 0;
-  bool foundGoal = false;
 
   BreadthFirstSearch({
     required this.board,
@@ -31,16 +30,14 @@ class BreadthFirstSearch implements SearchAlgorithm<Node> {
   @override
   Future<Node?> search(Future<void> Function(Node, [bool]) renderNode) async {
     Node initialNode = Node(startX, startY, currentIndex++);
-    List<Node> queue = [initialNode];
+    Queue<Node> queue = Queue<Node>();
+    queue.add(initialNode);
 
-    while (queue.isNotEmpty && !foundGoal) {
-      Node current = queue.removeAt(0);
-
-      await renderNode(current);
+    while (queue.isNotEmpty) {
+      Node current = queue.removeFirst();
 
       if (current.x == goalX && current.y == goalY) {
-        foundGoal = true;
-        await renderNode(current, true); 
+        await renderNode(current, true);
         return current;
       }
 
@@ -67,7 +64,7 @@ class BreadthFirstSearch implements SearchAlgorithm<Node> {
         x < board.length &&
         y >= 0 &&
         y < board[0].length &&
-        board[x][y] != 1; // '1'  (Obstáculo)
+        board[x][y] != 1;
   }
 
   String getPath(Node? node) {

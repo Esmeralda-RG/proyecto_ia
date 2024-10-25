@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:graphview/GraphView.dart';
 //import 'package:proyecto_ia/algorithms/greedy_search.dart' as greedy_search;
 //import 'package:proyecto_ia/algorithms/uniform_cost.dart' as uniform_cost;
-//import 'package:proyecto_ia/algorithms/depth_first_search.dart' as depth_first_search;
-import 'package:proyecto_ia/algorithms/breadth_first_search.dart' as breadth_first_search;
+import 'package:proyecto_ia/algorithms/depth_first_search.dart'
+    as depth_first_search;
+//import 'package:proyecto_ia/algorithms/breadth_first_search.dart'  as breadth_first_search;
 
 class TreeView extends StatefulWidget {
   const TreeView(
@@ -26,7 +27,8 @@ class TreeView extends StatefulWidget {
 }
 
 class _TreeViewState extends State<TreeView> {
-  late breadth_first_search.BreadthFirstSearch algorithm;
+  // late breadth_first_search.BreadthFirstSearch algorithm;
+  late depth_first_search.DepthFirstSearch algorithm;
   //late uniform_cost.UniformCost algorithm;
   //late greedy_search.GreedySearch algorithm;
   late Future executionSearch;
@@ -43,8 +45,8 @@ class _TreeViewState extends State<TreeView> {
   int yGoalParent = -1;
 
   //Future<void> renderNode(uniform_cost.Node node, [bool isGoal = false]) async {
-  Future<void> renderNode(breadth_first_search.Node node, [bool isGoal = false]) async {
-    //print('Renderizando nodo: (${node.x}, ${node.y})');
+  Future<void> renderNode(depth_first_search.Node node,
+      [bool isGoal = false]) async {
     await Future.delayed(Duration(seconds: 1));
 
     if (node.father == null) {
@@ -67,7 +69,7 @@ class _TreeViewState extends State<TreeView> {
     super.initState();
     //algorithm = greedy_search.GreedySearch(
     //algorithm = uniform_cost.UniformCost(
-    algorithm = breadth_first_search.BreadthFirstSearch(
+    algorithm = depth_first_search.DepthFirstSearch(
       board: widget.board,
       advanceOrders: widget.advanceOrder,
       startX: widget.startX,
@@ -119,19 +121,21 @@ class _TreeViewState extends State<TreeView> {
               paint: paint,
               builder: (Node node) {
                 //final value = node.key?.value as uniform_cost.Node;
-                final value = node.key?.value as breadth_first_search.Node;
+                final value = node.key?.value as depth_first_search.Node;
+                final isGoal = value.x == widget.goalX &&
+                    value.y == widget.goalY &&
+                    (value.father?.x == xGoalParent &&
+                        value.father?.y == yGoalParent);
                 return nodeWidget(value,
-                    isRoot: value.father == null,
-                    isGoal: (snapshot.data ?? false) &&
-                        (value.x == widget.goalX && value.y == widget.goalY));
+                    isRoot: value.father == null, isGoal: isGoal);
               },
             ),
           );
         });
   }
 
-  Widget nodeWidget(breadth_first_search.Node node,
-  //Widget nodeWidget(uniform_cost.Node node,
+  Widget nodeWidget(depth_first_search.Node node,
+      //Widget nodeWidget(uniform_cost.Node node,
       {bool isRoot = false,
       bool isGoal = false}) {
     final color = isRoot
