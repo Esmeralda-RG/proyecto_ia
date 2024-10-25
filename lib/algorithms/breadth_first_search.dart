@@ -4,9 +4,8 @@ import 'package:proyecto_ia/algorithms/search_algorithm.dart';
 class Node {
   final int x, y;
   final Node? father;
-  final int index;
 
-  Node(this.x, this.y, this.index, [this.father]);
+  Node(this.x, this.y, [this.father]);
 
   @override
   String toString() => '($x, $y)';
@@ -29,7 +28,7 @@ class BreadthFirstSearch implements SearchAlgorithm<Node> {
 
   @override
   Future<Node?> search(Future<void> Function(Node, [bool]) renderNode) async {
-    Node initialNode = Node(startX, startY, currentIndex++);
+    Node initialNode = Node(startX, startY);
     Queue<Node> queue = Queue<Node>();
     queue.add(initialNode);
 
@@ -49,7 +48,7 @@ class BreadthFirstSearch implements SearchAlgorithm<Node> {
             current.father?.x == newX && current.father?.y == newY;
 
         if (isValid(newX, newY, board) && !isGrandparent) {
-          Node neighbor = Node(newX, newY, currentIndex++, current);
+          Node neighbor = Node(newX, newY, current);
           queue.add(neighbor);
           await renderNode(neighbor);
         }
