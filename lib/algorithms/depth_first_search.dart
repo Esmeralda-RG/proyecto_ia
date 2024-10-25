@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:proyecto_ia/algorithms/search_algorithm.dart';
 
 class Node {
@@ -35,20 +34,16 @@ class DepthFirstSearch implements SearchAlgorithm<Node> {
 
     while (stack.isNotEmpty && !foundGoal) {
       Node current = stack.removeLast();
-
-      // Renderizar el nodo actual
       await renderNode(current);  
 
       if (current.x == goalX && current.y == goalY) {
         foundGoal = true;
-        await renderNode(current, true); // Marcar nodo como meta
+        await renderNode(current, true); 
         return current;
       }
 
-      // Expandir los vecinos en orden inverso
       List<Node> neighbors = [];
-      for (var i = advanceOrders.length - 1; i >= 0; i--) {
-        var advance = advanceOrders[i];
+      for (var advance in advanceOrders) {
         int newX = current.x + advance[0];
         int newY = current.y + advance[1];
         bool isGrandparent = current.father?.x == newX && current.father?.y == newY;
@@ -56,20 +51,11 @@ class DepthFirstSearch implements SearchAlgorithm<Node> {
         if (isValid(newX, newY, board) && !isGrandparent) {
           Node neighbor = Node(newX, newY, currentIndex++, current);
           neighbors.add(neighbor);
+          await renderNode(neighbor);
         }
-      }
-
-      // Agregar los vecinos a la pila en orden inverso
-      for (var neighbor in neighbors) {
-        stack.add(neighbor);
-      }
-
-      // Orden normal para la visualización de nodos
-      for (var neighbor in neighbors.reversed) {
-        await renderNode(neighbor);
-      }
+      }      
+      stack.addAll(neighbors.reversed);
     }
-
     return null;
   }
 
