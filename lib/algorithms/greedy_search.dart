@@ -1,58 +1,56 @@
 import 'package:collection/collection.dart' show PriorityQueue;
-import 'package:proyecto_ia/algorithms/search_algorithm.dart';
+import 'package:proyecto_ia/models/base_node.dart';
+import 'package:proyecto_ia/models/search_algorithm.dart';
 
-class Node implements Comparable<Node> {
-  final int x, y;
-  final int cost;
-  final Node? father;
-  final int index;
-
-  Node(this.x, this.y, this.cost, this.index, [this.father]);
+class Node extends BaseNode {
+  Node(super.x, super.y, super.index, super.cost, super.heuristic,
+      [super.father]);
 
   @override
-  int compareTo(Node other) {
-    int costComparison = cost.compareTo(other.cost);
-    if (costComparison == 0) {
+  int compareTo(BaseNode other) {
+    int heuristicComparison = heuristic.compareTo(other.heuristic);
+    if (heuristicComparison == 0) {
       return index.compareTo(other.index);
     }
-    return costComparison;
+    return heuristicComparison;
   }
 
   @override
-  String toString() =>
-      '($x, $y) -> Costo: $cost';
+  String toString() => '($x, $y) -> Heuristic: $heuristic';
 }
 
-class GreedySearch implements SearchAlgorithm<Node> {
-  final List<List<int>> board;
-  final List<List<int>> advanceOrders;
-  final int startX, startY, goalX, goalY;
-  int currentIndex = 0;
+class GreedySearch extends SearchAlgorithm {
+  final PriorityQueue<Node> _queue = PriorityQueue<Node>();
 
-  GreedySearch(
-      {required this.board,
-      required this.advanceOrders,
-      required this.startX,
-      required this.startY,
-      required this.goalX,
-      required this.goalY});
+  GreedySearch({
+    required super.board,
+    required super.advanceOrders,
+    required super.goalX,
+    required super.goalY,
+  });
+  final Map<BaseNode, int> _expandedNodes = {};
 
   @override
-  Future<Node?> search(Future<void> Function(Node, [bool]) renderNode) async {
-    PriorityQueue<Node> queue = PriorityQueue<Node>();
-    Set<String> visited = {};
-    Node initialNode = Node(startX, startY, 0, currentIndex++);
-    queue.add(initialNode);
+  Future<List<BaseNode>?> search(
+      Future<void> Function(Node, [bool]) renderNode, int maxIterations) async {
+    final initialNode = _queue.first;
+    _expandedNodes[initialNode] = 1;
     await renderNode(initialNode);
-
-    while (queue.isNotEmpty) {
-      Node current = queue.removeFirst();
+    while (_queue.isNotEmpty) {
+      Node current = _queue.removeFirst();
 
       if (current.x == goalX && current.y == goalY) {
         await renderNode(current, true);
-        return current;
+        return [];
       }
-      visited.add('${current.x},${current.y}');
+
+      if (current.father != null && _expandedNodes[current.father] != null) {
+        _expandedNodes[current] = _expandedNodes[current.father]! + 1;
+      }
+
+      if (_expandedNodes[current.father] == maxIterations) {
+        return [current, ..._queue.toList()];
+      }
 
       for (var advance in advanceOrders) {
         int newX = current.x + advance[0];
@@ -62,11 +60,12 @@ class GreedySearch implements SearchAlgorithm<Node> {
             newY == current.father!.y) {
           continue;
         }
-        if (isValid(newX, newY, board)) {
-          int heuristic = manhattanDistance(newX, newY, goalX, goalY);
+        if (isValid(newX, newY)) {
+          int heuristic = getHeuristic(newX, newY);
+          int cost = getCost(current);
           Node neighbor =
-              Node(newX, newY, heuristic, currentIndex++, current);
-          queue.add(neighbor);
+              Node(newX, newY, currentIndex++, cost, heuristic, current);
+          _queue.add(neighbor);
           await renderNode(neighbor);
         }
       }
@@ -74,28 +73,13 @@ class GreedySearch implements SearchAlgorithm<Node> {
     return null;
   }
 
-  int manhattanDistance(int x, int y, int goalX, int goalY) {
-    return (x - goalX).abs() + (y - goalY).abs();
-  }
-
-  bool isValid(int x, int y, List<List<int>> board) {
-    return x >= 0 &&
-        x < board.length &&
-        y >= 0 &&
-        y < board[0].length &&
-        board[x][y] != 1;
-  }
-
-  String getPath(Node? node) {
-    if (node == null) {
-      return 'No se encontró un camino.';
+  @override
+  void initContext(List<BaseNode> nodes) {
+    _queue.clear();
+    for (var node in nodes) {
+      _queue.add(Node(
+          node.x, node.y, node.index, node.cost, node.heuristic, node.father));
     }
-    List<Node> path = [];
-    while (node != null) {
-      path.add(node);
-      node = node.father;
-    }
-    path = path.reversed.toList();
-    return 'Camino encontrado: ${path.join(' -> ')}';
+    setCurrentIndex(nodes);
   }
 }
