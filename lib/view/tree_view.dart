@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:graphview/GraphView.dart';
 import 'package:proyecto_ia/models/base_node.dart';
 import 'package:proyecto_ia/controllers/search_algorithm_controller.dart';
+import 'package:proyecto_ia/widgets/iterations_input_prompt.dart';
 
 class TreeView extends StatefulWidget {
   const TreeView(
@@ -27,7 +28,7 @@ class TreeView extends StatefulWidget {
 
 class _TreeViewState extends State<TreeView> {
   late final SearchAlgorithmController _algorithmController;
-  late Future executionSearch;
+  late final Future executionSearch;
   final streamController = StreamController<bool>();
   final Graph graph = Graph()..isTree = true;
   final BuchheimWalkerConfiguration builder = BuchheimWalkerConfiguration();
@@ -50,11 +51,21 @@ class _TreeViewState extends State<TreeView> {
           '(${node.father!.x}, ${node.father!.y}), ${node.father!.index}');
       graph.addEdge(parent, child);
     }
+    streamController.add(isGoal);
     if (isGoal) {
       xGoalParent = node.father?.x ?? -1;
       yGoalParent = node.father?.y ?? -1;
+      streamController.close();
     }
-    streamController.add(isGoal);
+  }
+
+  Future<int> getIterations(String algorithm) async {
+    final iterations = await showDialog<int>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => IterationsInputPrompt(algorithm: algorithm));
+
+    return iterations ?? 0;
   }
 
   @override
@@ -68,17 +79,18 @@ class _TreeViewState extends State<TreeView> {
         goalX: widget.goalX,
         goalY: widget.goalY,
         onAlgorithmChange: widget.onAlgorithmChange,
+        getMaxIterations: getIterations,
         renderNode: renderNode);
 
-    executionSearch = _algorithmController.search();
-    executionSearch.whenComplete(() {
-      streamController.close();
-    });
     builder
-      ..siblingSeparation = (50)
-      ..levelSeparation = (50)
-      ..subtreeSeparation = (50)
-      ..orientation = (BuchheimWalkerConfiguration.ORIENTATION_TOP_BOTTOM);
+      ..siblingSeparation = 50
+      ..levelSeparation = 50
+      ..subtreeSeparation = 50
+      ..orientation = BuchheimWalkerConfiguration.ORIENTATION_TOP_BOTTOM;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      executionSearch = _algorithmController.search();
+    });
   }
 
   @override

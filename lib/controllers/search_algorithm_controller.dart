@@ -10,6 +10,7 @@ class SearchAlgorithmController {
   final int startX, startY, goalX, goalY;
   final Future<void> Function(BaseNode, [bool]) renderNode;
   final Function(String) onAlgorithmChange;
+  final Future<int> Function(String) getMaxIterations;
 
   SearchAlgorithmController(
       {required this.board,
@@ -19,6 +20,7 @@ class SearchAlgorithmController {
       required this.goalX,
       required this.goalY,
       required this.onAlgorithmChange,
+      required this.getMaxIterations,
       required this.renderNode}) {
     _algorithms = {
       'Uniform Cost': UniformCost(
@@ -54,7 +56,8 @@ class SearchAlgorithmController {
       onAlgorithmChange(key);
       final algorithm = _algorithms[key]!;
       algorithm.initContext(_nodeContex);
-      final newContext = await algorithm.search(renderNode, 2);
+      final maxIterations = await getMaxIterations(key);
+      final newContext = await algorithm.search(renderNode, maxIterations);
 
       if (newContext == null) {
         throw Exception('No solution found');
