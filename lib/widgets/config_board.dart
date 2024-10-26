@@ -9,12 +9,14 @@ class ConfigBoard extends StatelessWidget {
     required this.onGenerateBoard,
     required this.onClearBoard,
     required this.formKey,
+    required this.onInit,
   });
 
   final TextEditingController rowsController;
   final TextEditingController columnsController;
   final void Function()? onGenerateBoard;
   final void Function()? onClearBoard;
+  final void Function()? onInit;
   final GlobalKey<FormState> formKey;
 
   @override
@@ -22,7 +24,7 @@ class ConfigBoard extends StatelessWidget {
     return Form(
       key: formKey,
       child: SizedBox(
-        height: 210,
+        height: 300,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -63,6 +65,7 @@ class ConfigBoard extends StatelessWidget {
               onPressed: onClearBoard,
               child: const Text('Limpiar tablero'),
             ),
+            ElevatedButton(onPressed: onInit, child: Text('Iniciar'))
           ],
         ),
       ),

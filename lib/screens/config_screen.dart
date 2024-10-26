@@ -4,7 +4,6 @@ import 'package:proyecto_ia/screens/search_algorithm_screen.dart';
 import 'package:proyecto_ia/widgets/config_board.dart';
 import 'package:proyecto_ia/widgets/custom_button.dart';
 import 'package:proyecto_ia/widgets/dragable_grid.dart';
-import 'package:proyecto_ia/widgets/search_iterations_settings.dart';
 
 class ConfigScreen extends StatelessWidget {
   const ConfigScreen({super.key});
@@ -20,15 +19,14 @@ class ConfigScreen extends StatelessWidget {
         TextEditingController(text: '4');
     final TextEditingController columnsController =
         TextEditingController(text: '4');
-    final TextEditingController iterationsController =
-        TextEditingController(text: '2');
+
     final ValueNotifier<Cell?> initialPositionNotifier =
         ValueNotifier<Cell?>(null);
     final ValueNotifier<Cell?> goalPositionNotifier =
         ValueNotifier<Cell?>(null);
     final List<Cell> walls = [];
     final GlobalKey<FormState> configBoardFormKey = GlobalKey<FormState>();
-    final GlobalKey<FormState> finishConfigFormKey = GlobalKey<FormState>();
+
     int rows = 4;
     int columns = 4;
 
@@ -50,7 +48,6 @@ class ConfigScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(height: 100),
                     Text(
                       'Configuración',
                       style: TextStyle(
@@ -75,54 +72,55 @@ class ConfigScreen extends StatelessWidget {
                         walls.clear();
                         selectedCellsNotifier.value = {};
                       },
+                      onInit: () {
+                        if (!configBoardFormKey.currentState!.validate()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  'Por favor, llena los campos correctamente'),
+                            ),
+                          );
+                          return;
+                        }
+
+                        if (initialPositionNotifier.value == null ||
+                            goalPositionNotifier.value == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  'Por favor, selecciona la posición inicial y la meta'),
+                            ),
+                          );
+                          return;
+                        }
+
+                        final board = List.generate(
+                          rows,
+                          (index) => List.generate(
+                            columns,
+                            (index) => 0,
+                          ),
+                        );
+
+                        for (var element in walls) {
+                          board[element.row][element.column] = 1;
+                        }
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SearchAlgorithmScreen(
+                              board: board,
+                              startX: initialPositionNotifier.value!.row,
+                              startY: initialPositionNotifier.value!.column,
+                              goalX: goalPositionNotifier.value!.row,
+                              goalY: goalPositionNotifier.value!.column,
+                            ),
+                          ),
+                        );
+                      },
                       formKey: configBoardFormKey,
                     ),
-                    Spacer(),
-                    SearchIterationsSettings(
-                        finishConfigFormKey: finishConfigFormKey,
-                        iterationsController: iterationsController,
-                        onStartSearch: () {
-                          if (!configBoardFormKey.currentState!.validate()) {
-                            return;
-                          }
-
-                          if (initialPositionNotifier.value == null ||
-                              goalPositionNotifier.value == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                    'Por favor, selecciona la posición inicial y la meta'),
-                              ),
-                            );
-                            return;
-                          }
-
-                          final board = List.generate(
-                            rows,
-                            (index) => List.generate(
-                              columns,
-                              (index) => 0,
-                            ),
-                          );
-
-                          for (var element in walls) {
-                            board[element.row][element.column] = 1;
-                          }
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SearchAlgorithmScreen(
-                                board: board,
-                                startX: initialPositionNotifier.value!.row,
-                                startY: initialPositionNotifier.value!.column,
-                                goalX: goalPositionNotifier.value!.row,
-                                goalY: goalPositionNotifier.value!.column,
-                              ),
-                            ),
-                          );
-                        }),
-                    SizedBox(height: 100)
                   ],
                 ),
               ),
