@@ -1,11 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:graphview/GraphView.dart';
-//import 'package:proyecto_ia/algorithms/greedy_search.dart' as greedy_search;
-//import 'package:proyecto_ia/algorithms/uniform_cost.dart' as uniform_cost;
-import 'package:proyecto_ia/algorithms/depth_first_search.dart'
-    as depth_first_search;
-//import 'package:proyecto_ia/algorithms/breadth_first_search.dart'  as breadth_first_search;
+import 'package:proyecto_ia/models/base_node.dart';
+import 'package:proyecto_ia/controllers/search_algorithm_controller.dart';
 
 class TreeView extends StatefulWidget {
   const TreeView(
@@ -15,24 +12,22 @@ class TreeView extends StatefulWidget {
       required this.startX,
       required this.startY,
       required this.goalX,
-      required this.goalY});
+      required this.goalY,
+      required this.onAlgorithmChange});
   final List<List<int>> board;
   final List<List<int>> advanceOrder;
   final int startX;
   final int startY;
   final int goalX;
   final int goalY;
+  final ValueChanged<String> onAlgorithmChange;
   @override
   State<TreeView> createState() => _TreeViewState();
 }
 
 class _TreeViewState extends State<TreeView> {
-  // late breadth_first_search.BreadthFirstSearch algorithm;
-  late depth_first_search.DepthFirstSearch algorithm;
-  //late uniform_cost.UniformCost algorithm;
-  //late greedy_search.GreedySearch algorithm;
+  late final SearchAlgorithmController _algorithmController;
   late Future executionSearch;
-  //final streamController = StreamController<bool>();
   final streamController = StreamController<bool>();
   final Graph graph = Graph()..isTree = true;
   final BuchheimWalkerConfiguration builder = BuchheimWalkerConfiguration();
@@ -44,22 +39,20 @@ class _TreeViewState extends State<TreeView> {
   int xGoalParent = -1;
   int yGoalParent = -1;
 
-  //Future<void> renderNode(uniform_cost.Node node, [bool isGoal = false]) async {
-  Future<void> renderNode(depth_first_search.Node node,
-      [bool isGoal = false]) async {
+  Future<void> renderNode(BaseNode node, [bool isGoal = false]) async {
     await Future.delayed(Duration(seconds: 1));
 
     if (node.father == null) {
-      graph.addNode(Node.Id(node));
+      graph.addNode(Node.Id('(${node.x}, ${node.y}), ${node.index}'));
     } else {
-      final child = Node.Id(node);
-      final parent = Node.Id(node.father);
+      final child = Node.Id('(${node.x}, ${node.y}), ${node.index}');
+      final parent = Node.Id(
+          '(${node.father!.x}, ${node.father!.y}), ${node.father!.index}');
       graph.addEdge(parent, child);
     }
     if (isGoal) {
       xGoalParent = node.father?.x ?? -1;
       yGoalParent = node.father?.y ?? -1;
-      //print('Nodo meta encontrado: (${node.x}, ${node.y})');
     }
     streamController.add(isGoal);
   }
@@ -67,19 +60,20 @@ class _TreeViewState extends State<TreeView> {
   @override
   void initState() {
     super.initState();
-    //algorithm = greedy_search.GreedySearch(
-    //algorithm = uniform_cost.UniformCost(
-    algorithm = depth_first_search.DepthFirstSearch(
-      board: widget.board,
-      advanceOrders: widget.advanceOrder,
-      startX: widget.startX,
-      startY: widget.startY,
-      goalX: widget.goalX,
-      goalY: widget.goalY,
-    );
+    _algorithmController = SearchAlgorithmController(
+        board: widget.board,
+        advanceOrders: widget.advanceOrder,
+        startX: widget.startX,
+        startY: widget.startY,
+        goalX: widget.goalX,
+        goalY: widget.goalY,
+        onAlgorithmChange: widget.onAlgorithmChange,
+        renderNode: renderNode);
 
-    executionSearch = algorithm.search(renderNode);
-
+    executionSearch = _algorithmController.search();
+    executionSearch.whenComplete(() {
+      streamController.close();
+    });
     builder
       ..siblingSeparation = (50)
       ..levelSeparation = (50)
@@ -97,7 +91,6 @@ class _TreeViewState extends State<TreeView> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<bool>(
-        //return StreamBuilder<bool>(
         stream: streamController.stream,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -120,24 +113,15 @@ class _TreeViewState extends State<TreeView> {
                   BuchheimWalkerAlgorithm(builder, TreeEdgeRenderer(builder)),
               paint: paint,
               builder: (Node node) {
-                //final value = node.key?.value as uniform_cost.Node;
-                final value = node.key?.value as depth_first_search.Node;
-                final isGoal = value.x == widget.goalX &&
-                    value.y == widget.goalY &&
-                    (value.father?.x == xGoalParent &&
-                        value.father?.y == yGoalParent);
-                return nodeWidget(value,
-                    isRoot: value.father == null, isGoal: isGoal);
+                return nodeWidget(null, text: node.key!.value.toString());
               },
             ),
           );
         });
   }
 
-  Widget nodeWidget(depth_first_search.Node node,
-      //Widget nodeWidget(uniform_cost.Node node,
-      {bool isRoot = false,
-      bool isGoal = false}) {
+  Widget nodeWidget(BaseNode? node,
+      {bool isRoot = false, bool isGoal = false, String text = ''}) {
     final color = isRoot
         ? Colors.green.shade100
         : isGoal
@@ -150,7 +134,7 @@ class _TreeViewState extends State<TreeView> {
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(4), color: color),
-          child: Text(node.toString()),
+          child: Text(node?.toString() ?? text),
         ),
         if (isGoal)
           Positioned(
