@@ -1,43 +1,38 @@
-import 'dart:collection/collection.dart' show Queue;
-import 'package:proyecto_ia/algorithms/search_algorithm.dart';
+import 'dart:collection' show Queue;
+import 'package:proyecto_ia/models/base_node.dart';
+import 'package:proyecto_ia/models/search_algorithm.dart';
 
-class Node {
-  final int x, y;
-  final Node? father;
-
-  Node(this.x, this.y, [this.father]);
-
-  @override
-  String toString() => '($x, $y)';
-}
-
-class BreadthFirstSearch implements SearchAlgorithm<Node> {
-  final List<List<int>> board;
-  final List<List<int>> advanceOrders;
-  final int startX, startY, goalX, goalY;
-  int currentIndex = 0;
-
+class BreadthFirstSearch extends SearchAlgorithm {
   BreadthFirstSearch({
-    required this.board,
-    required this.advanceOrders,
-    required this.startX,
-    required this.startY,
-    required this.goalX,
-    required this.goalY,
+    required super.board,
+    required super.advanceOrders,
+    required super.goalX,
+    required super.goalY,
   });
 
-  @override
-  Future<Node?> search(Future<void> Function(Node, [bool]) renderNode) async {
-    Node initialNode = Node(startX, startY);
-    Queue<Node> queue = Queue<Node>();
-    queue.add(initialNode);
+  final Queue<BaseNode> _queue = Queue<BaseNode>();
+  final Map<BaseNode, int> _expandedNodes = {};
 
-    while (queue.isNotEmpty) {
-      Node current = queue.removeFirst();
+  @override
+  Future<List<BaseNode>?> search(
+      Future<void> Function(BaseNode, [bool]) renderNode,
+      int maxIterations) async {
+    final initialNode = _queue.first;
+    _expandedNodes[initialNode] = 1;
+    await renderNode(initialNode);
+    while (_queue.isNotEmpty) {
+      final current = _queue.removeFirst();
 
       if (current.x == goalX && current.y == goalY) {
         await renderNode(current, true);
-        return current;
+        return [];
+      }
+      if (current.father != null && _expandedNodes[current.father] != null) {
+        _expandedNodes[current] = _expandedNodes[current.father]! + 1;
+      }
+
+      if (_expandedNodes[current.father] == maxIterations) {
+        return [current, ..._queue];
       }
 
       for (var i = 0; i < advanceOrders.length; i++) {
@@ -47,9 +42,10 @@ class BreadthFirstSearch implements SearchAlgorithm<Node> {
         bool isGrandparent =
             current.father?.x == newX && current.father?.y == newY;
 
-        if (isValid(newX, newY, board) && !isGrandparent) {
-          Node neighbor = Node(newX, newY, current);
-          queue.add(neighbor);
+        if (isValid(newX, newY) && !isGrandparent) {
+          final neighbor = BaseNode(newX, newY, currentIndex++,
+              getCost(current), getHeuristic(newX, newY), current);
+          _queue.add(neighbor);
           await renderNode(neighbor);
         }
       }
@@ -58,26 +54,12 @@ class BreadthFirstSearch implements SearchAlgorithm<Node> {
     return null;
   }
 
-  bool isValid(int x, int y, List<List<int>> board) {
-    return x >= 0 &&
-        x < board.length &&
-        y >= 0 &&
-        y < board[0].length &&
-        board[x][y] != 1;
-  }
-
-  String getPath(Node? node) {
-    if (node == null) {
-      return 'No se encontró un camino.';
+  @override
+  void initContext(List<BaseNode> nodes) {
+    _queue.clear();
+    for (var node in nodes) {
+      _queue.add(node);
     }
-
-    List<Node> path = [];
-    while (node != null) {
-      path.add(node);
-      node = node.father;
-    }
-
-    path = path.reversed.toList();
-    return 'Camino encontrado: ${path.join(' -> ')}';
+    setCurrentIndex(nodes);
   }
 }

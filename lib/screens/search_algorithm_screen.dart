@@ -17,12 +17,29 @@ class SearchAlgorithmScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ValueNotifier<String> selectedAlgorithm = ValueNotifier<String>('');
     return Scaffold(
         appBar: AppBar(
           title: const Text('Algoritmos de búsqueda'),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(50),
+            child: ValueListenableBuilder<String>(
+              valueListenable: selectedAlgorithm,
+              builder: (context, value, child) {
+                return Text(
+                  value,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 20),
+                );
+              },
+            ),
+          ),
         ),
         body: TreeView(
           board: board,
+          onAlgorithmChange: (String algorithm) {
+            selectedAlgorithm.value = algorithm;
+          },
           advanceOrder: [
             [-1, 0], // Arriba
             [0, 1], // Derecha
