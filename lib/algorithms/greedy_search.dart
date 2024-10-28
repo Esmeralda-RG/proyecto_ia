@@ -29,6 +29,8 @@ class GreedySearch extends SearchAlgorithm {
     required super.goalY,
   });
 
+  final List<Node> _temporaryNodes = [];
+
   @override
   Future<List<BaseNode>?> search(
       Future<void> Function(Node, [bool]) renderNode, int maxIterations) async {
@@ -57,12 +59,14 @@ class GreedySearch extends SearchAlgorithm {
               Node(newX, newY, currentIndex++, cost, heuristic, current);
           _queue.add(neighbor);
           setNodeIterations(neighbor);
+          _temporaryNodes.add(neighbor);
           await renderNode(neighbor);
         }
       }
 
+       _temporaryNodes.removeWhere((element) => element.index == current.index);
       if (hasReachedMaxIterations(current, _queue.first, maxIterations)) {
-        return _queue.toList();
+        return _temporaryNodes;
       }
     }
     return null;
@@ -71,9 +75,11 @@ class GreedySearch extends SearchAlgorithm {
   @override
   void setupNodeContext(List<BaseNode> nodes) {
     _queue.clear();
-    for (var node in nodes) {
-      _queue.add(Node(
-          node.x, node.y, node.index, node.cost, node.heuristic, node.father));
+    for (var context in nodes) {
+     final node =  Node(
+          context.x, context.y, context.index, context.cost, context.heuristic, context.father);
+      _queue.add(node);
+      _temporaryNodes.add(node);
     }
   }
 }
