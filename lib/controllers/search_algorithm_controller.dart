@@ -24,7 +24,7 @@ class SearchAlgorithmController {
       required this.getMaxIterations,
       required this.renderNode}) {
     _algorithms = {
-      'Uniform Cost': UniformCost(
+      'Breadth First Search': BreadthFirstSearch(
           board: board,
           advanceOrders: advanceOrders,
           goalX: goalX,
@@ -34,7 +34,7 @@ class SearchAlgorithmController {
           advanceOrders: advanceOrders,
           goalX: goalX,
           goalY: goalY),
-      'Breadth First Search': BreadthFirstSearch(
+      'Uniform Cost': UniformCost(
           board: board,
           advanceOrders: advanceOrders,
           goalX: goalX,
@@ -56,12 +56,12 @@ class SearchAlgorithmController {
 
   Future<void> search() async {
     final keysAlgorithm = _algorithms.keys.toList();
-    keysAlgorithm.shuffle();
+    //keysAlgorithm.shuffle();
     print('Order of algorithms: $keysAlgorithm');
     for (var key in keysAlgorithm) {
       onAlgorithmChange(key);
       final algorithm = _algorithms[key]!;
-      algorithm.initContext(_nodeContex);
+      algorithm.initAlgorithm(_nodeContex);
       final maxIterations = await getMaxIterations(key);
       final newContext = await algorithm.search(renderNode, maxIterations);
 
@@ -72,6 +72,8 @@ class SearchAlgorithmController {
       if (newContext.isNotEmpty) {
         _nodeContex.clear();
         _nodeContex.addAll(newContext);
+        print('Context updated with ${_nodeContex.length} nodes');
+        print('new context by $key: $_nodeContex');
         continue;
       }
 
