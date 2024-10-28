@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:proyecto_ia/models/base_node.dart';
 
 abstract class SearchAlgorithm {
@@ -13,6 +12,7 @@ abstract class SearchAlgorithm {
   final List<List<int>> board;
   final List<List<int>> advanceOrders;
   final int goalX, goalY;
+  final Map<int, int> expandedNodes = {};
   int currentIndex = 0;
 
   Future<List<BaseNode>?> search(
@@ -56,9 +56,38 @@ abstract class SearchAlgorithm {
     return node.cost + 1;
   }
 
-  void initContext(List<BaseNode> nodes);
+  void setupNodeContext(List<BaseNode> nodes);
 
-  void setCurrentIndex(List<BaseNode> nodes) {
+  void initAlgorithm(List<BaseNode> nodes) {
+    setupNodeContext(nodes);
     currentIndex = nodes.map((e) => e.index).reduce(max) + 1;
+    for (var node in nodes) {
+      expandedNodes[node.index] = 0;
+    }
+  }
+
+  void setNodeIterations(BaseNode node) {
+    if (expandedNodes[node.father!.index] != null) {
+      expandedNodes[node.index] = expandedNodes[node.father!.index]! + 1;
+    }
+  }
+
+  bool hasReachedMaxIterations(
+      BaseNode current, BaseNode next, int maxIterations,
+      [bool hasComplete = false]) {
+    if (expandedNodes[next.index] == expandedNodes[current.index] &&
+        hasComplete) {
+      return false;
+    }
+
+    if (expandedNodes[next.index] == maxIterations) {
+      return true;
+    }
+
+    if (!hasComplete && expandedNodes.containsValue(maxIterations)) {
+      return true;
+    }
+
+    return false;
   }
 }
