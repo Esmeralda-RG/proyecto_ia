@@ -28,13 +28,11 @@ class GreedySearch extends SearchAlgorithm {
     required super.goalX,
     required super.goalY,
   });
-  final Map<BaseNode, int> _expandedNodes = {};
 
   @override
   Future<List<BaseNode>?> search(
       Future<void> Function(Node, [bool]) renderNode, int maxIterations) async {
     final initialNode = _queue.first;
-    _expandedNodes[initialNode] = 1;
     await renderNode(initialNode);
     while (_queue.isNotEmpty) {
       Node current = _queue.removeFirst();
@@ -42,14 +40,6 @@ class GreedySearch extends SearchAlgorithm {
       if (current.x == goalX && current.y == goalY) {
         await renderNode(current, true);
         return [];
-      }
-
-      if (current.father != null && _expandedNodes[current.father] != null) {
-        _expandedNodes[current] = _expandedNodes[current.father]! + 1;
-      }
-
-      if (_expandedNodes[current.father] == maxIterations) {
-        return [current, ..._queue.toList()];
       }
 
       for (var advance in advanceOrders) {
@@ -66,20 +56,24 @@ class GreedySearch extends SearchAlgorithm {
           Node neighbor =
               Node(newX, newY, currentIndex++, cost, heuristic, current);
           _queue.add(neighbor);
+          setNodeIterations(neighbor);
           await renderNode(neighbor);
         }
+      }
+
+      if (hasReachedMaxIterations(current, _queue.first, maxIterations)) {
+        return _queue.toList();
       }
     }
     return null;
   }
 
   @override
-  void initContext(List<BaseNode> nodes) {
+  void setupNodeContext(List<BaseNode> nodes) {
     _queue.clear();
     for (var node in nodes) {
       _queue.add(Node(
           node.x, node.y, node.index, node.cost, node.heuristic, node.father));
     }
-    setCurrentIndex(nodes);
   }
 }
