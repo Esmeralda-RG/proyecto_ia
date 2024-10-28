@@ -56,7 +56,7 @@ class SearchAlgorithmController {
 
   Future<void> search() async {
     final keysAlgorithm = _algorithms.keys.toList();
-    //keysAlgorithm.shuffle();
+    keysAlgorithm.shuffle();
     print('Order of algorithms: $keysAlgorithm');
     for (var key in keysAlgorithm) {
       onAlgorithmChange(key);

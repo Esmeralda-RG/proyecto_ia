@@ -32,6 +32,10 @@ class IterationsInputPrompt extends StatelessWidget {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a number';
                   }
+                  int? number = int.tryParse(value);
+                  if (number == null || number < 0) {
+                    return 'Please enter a value greater than 0';
+                  }
                   return null;
                 }),
           ],
