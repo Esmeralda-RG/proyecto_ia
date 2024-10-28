@@ -3,7 +3,7 @@ import 'package:proyecto_ia/models/base_node.dart';
 import 'package:proyecto_ia/models/search_algorithm.dart';
 
 class Node extends BaseNode {
-  Node(super.x, super.y, super.index, super.cost, super.heuristic,
+  Node(super.x, super.y, super.index, super.cost, super.heuristic, super.level,
       [super.father]);
 
   @override
@@ -16,7 +16,7 @@ class Node extends BaseNode {
   }
 
   @override
-  String toString() => '($x, $y) -> Heuristic: $heuristic';
+  String toString() => '($x, $y) -> Heuristic: $heuristic, level: $level';
 }
 
 class GreedySearch extends SearchAlgorithm {
@@ -47,6 +47,7 @@ class GreedySearch extends SearchAlgorithm {
       for (var advance in advanceOrders) {
         int newX = current.x + advance[0];
         int newY = current.y + advance[1];
+        final level = isLevel(current);
         if (current.father != null &&
             newX == current.father!.x &&
             newY == current.father!.y) {
@@ -56,7 +57,7 @@ class GreedySearch extends SearchAlgorithm {
           int heuristic = getHeuristic(newX, newY);
           int cost = getCost(current);
           Node neighbor =
-              Node(newX, newY, currentIndex++, cost, heuristic, current);
+              Node(newX, newY, currentIndex++, cost, heuristic, level, current);
           _queue.add(neighbor);
           setNodeIterations(neighbor);
           _temporaryNodes.add(neighbor);
@@ -77,7 +78,7 @@ class GreedySearch extends SearchAlgorithm {
     _queue.clear();
     for (var context in nodes) {
      final node =  Node(
-          context.x, context.y, context.index, context.cost, context.heuristic, context.father);
+          context.x, context.y, context.index, context.cost, context.heuristic, context.level, context.father);
       _queue.add(node);
       _temporaryNodes.add(node);
     }

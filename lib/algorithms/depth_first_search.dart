@@ -30,21 +30,23 @@ class DepthFirstSearch extends SearchAlgorithm {
       for (var advance in advanceOrders) {
         int newX = current.x + advance[0];
         int newY = current.y + advance[1];
+        final level = isLevel(current);
         bool isGrandparent =
             current.father?.x == newX && current.father?.y == newY;
 
         if (isValid(newX, newY) && !isGrandparent) {
           final neighbor = BaseNode(newX, newY, currentIndex++,
-              getCost(current), getHeuristic(newX, newY), current);
+              getCost(current), getHeuristic(newX, newY), level, current);
           neighbors.add(neighbor);
           setNodeIterations(neighbor);
           await renderNode(neighbor);
+          print(neighbor);
         }
       }
       _stack.addAll(neighbors.reversed);
 
       if (hasReachedMaxIterations(current, _stack.last, maxIterations)) {
-        return _stack;
+        return _stack.reversed.toList();    
       }
     }
     return null;
@@ -53,7 +55,7 @@ class DepthFirstSearch extends SearchAlgorithm {
   @override
   void setupNodeContext(List<BaseNode> nodes) {
     _stack.clear();
-    for (var node in nodes.reversed) {
+    for (var node in nodes) {
       _stack.add(node);
     }
   }

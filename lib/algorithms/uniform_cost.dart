@@ -3,7 +3,7 @@ import 'package:proyecto_ia/models/base_node.dart';
 import 'package:proyecto_ia/models/search_algorithm.dart';
 
 class Node extends BaseNode {
-  Node(super.x, super.y, super.index, super.cost, super.heuristic,
+  Node(super.x, super.y, super.index, super.cost, super.heuristic, super.level,
       [super.father]);
 
   @override
@@ -16,7 +16,7 @@ class Node extends BaseNode {
   }
 
   @override
-  String toString() => '($x, $y) -> Cost: $cost';
+  String toString() => '($x, $y) -> Cost: $cost, Level: $level';
 }
 
 class UniformCost extends SearchAlgorithm {
@@ -48,13 +48,14 @@ class UniformCost extends SearchAlgorithm {
       for (var advance in advanceOrders) {
         int newX = current.x + advance[0];
         int newY = current.y + advance[1];
+        final level = isLevel(current);
 
         bool isGrandparent =
             current.father?.x == newX && current.father?.y == newY;
 
         if (isValid(newX, newY) && !isGrandparent) {
           final neighbor = Node(newX, newY, currentIndex++, getCost(current),
-              getHeuristic(newX, newY), current);
+              getHeuristic(newX, newY), level, current);
           _queue.add(neighbor);
           setNodeIterations(neighbor);
           _temporaryNodes.add(neighbor);
@@ -62,7 +63,7 @@ class UniformCost extends SearchAlgorithm {
         }
       }
       _temporaryNodes.removeWhere((element) => element.index == current.index);
-      if (hasReachedMaxIterations(current, _queue.first, maxIterations, true)) {
+      if (hasReachedMaxIterations(current, _queue.first, maxIterations)) {
         return _temporaryNodes;
       }
     }
@@ -75,7 +76,7 @@ class UniformCost extends SearchAlgorithm {
     _queue.clear();
     for (var context in nodes) {
       final node =  Node(
-          context.x, context.y, context.index, context.cost, context.heuristic, context.father);
+          context.x, context.y, context.index, context.cost, context.heuristic, context.level, context.father);
       _queue.add(node);
       _temporaryNodes.add(node);
     }

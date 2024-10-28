@@ -15,6 +15,7 @@ abstract class SearchAlgorithm {
   final Map<int, int> expandedNodes = {};
   int currentIndex = 0;
 
+
   Future<List<BaseNode>?> search(
       Future<void> Function(BaseNode, [bool]) renderNode, int maxIterations);
 
@@ -38,6 +39,11 @@ abstract class SearchAlgorithm {
 
   int _manhattanDistance(int x, int y, int goalX, int goalY) {
     return (x - goalX).abs() + (y - goalY).abs();
+  }
+
+  int isLevel(BaseNode current) {
+    int level = current.level + 1;
+    return level; 
   }
 
   bool isValid(int x, int y) {
