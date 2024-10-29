@@ -40,7 +40,7 @@ class ConfigScreen extends StatelessWidget {
         children: [
           SizedBox(
             width: size.width * .2,
-            height: size.height,
+            height: size.height - 60,
             child: Center(
               child: FractionallySizedBox(
                 widthFactor: .8,
@@ -130,7 +130,7 @@ class ConfigScreen extends StatelessWidget {
             children: [
               SizedBox(
                 width: size.width * .8,
-                height: size.height * .8,
+                height: (size.height - 60) * .8,
                 child: ValueListenableBuilder(
                     valueListenable: selectedCellsNotifier,
                     builder: (context, value, _) {
@@ -199,7 +199,7 @@ class ConfigScreen extends StatelessWidget {
               ),
               SizedBox(
                 width: size.width * .8,
-                height: size.height * .2 - 60,
+                height: (size.height - 60) * .2,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
