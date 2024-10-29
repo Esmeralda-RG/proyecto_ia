@@ -51,8 +51,9 @@ abstract class SearchAlgorithm {
   int isOrderInLevel(BaseNode current) {
     if (orderCounter[current.level] == null) {
       orderCounter[current.level] = 0;
+    } else {
+      orderCounter[current.level] = orderCounter[current.level]! + 1;
     }
-    orderCounter[current.level] = orderCounter[current.level]! + 1;
     return orderCounter[current.level]!;
   }
 
