@@ -49,8 +49,7 @@ class SearchAlgorithmController {
           board: board,
           advanceOrders: advanceOrders,
           goalX: goalX,
-          goalY: goalY,
-          depthLimit: 7),
+          goalY: goalY),
     };
 
     _nodeContex.clear();

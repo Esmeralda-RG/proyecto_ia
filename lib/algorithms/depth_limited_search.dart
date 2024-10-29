@@ -2,15 +2,16 @@ import 'package:proyecto_ia/models/base_node.dart';
 import 'package:proyecto_ia/models/search_algorithm.dart';
 
 class DepthLimitedSearch extends SearchAlgorithm {
-  final int depthLimit;
+  //final int depthLimit;
 
   DepthLimitedSearch({
     required super.board,
     required super.advanceOrders,
     required super.goalX,
     required super.goalY,
-    required this.depthLimit,
   });
+
+ /*required this.depthLimit,*/
 
   final List<BaseNode> _stack = [];
 
@@ -31,9 +32,9 @@ class DepthLimitedSearch extends SearchAlgorithm {
       }
 
       // verifica si la profundidad del nodo actual excede el limite y omite sus vecinos
-      if (_getDepth(current) >= depthLimit) {
+      /*if (_getDepth(current) >= depthLimit) {
         continue;
-      }
+      }*/
 
       final List<BaseNode> neighbors = [];
       for (var advance in advanceOrders) {
@@ -69,7 +70,7 @@ class DepthLimitedSearch extends SearchAlgorithm {
   }
 
   // calcuña la profundidad del nodo hasta la raiz
-  int _getDepth(BaseNode node) {
+  /*int _getDepth(BaseNode node) {
     int depth = 0;
     BaseNode? current = node;
     while (current?.father != null) {
@@ -77,5 +78,5 @@ class DepthLimitedSearch extends SearchAlgorithm {
       current = current?.father;
     }
     return depth;
-  }
+  }*/
 }

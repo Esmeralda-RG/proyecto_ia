@@ -55,7 +55,6 @@ class _TreeViewState extends State<TreeView> {
     if (isGoal) {
       xGoalParent = node.father?.x ?? -1;
       yGoalParent = node.father?.y ?? -1;
-      streamController.close();
     }
   }
 
