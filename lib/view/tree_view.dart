@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:graphview/GraphView.dart';
+import 'package:proyecto_ia/extensions/node_extension.dart';
 import 'package:proyecto_ia/models/base_node.dart';
 import 'package:proyecto_ia/controllers/search_algorithm_controller.dart';
 import 'package:proyecto_ia/widgets/iterations_input_prompt.dart';
+import 'package:proyecto_ia/widgets/node_widget.dart';
 
 class TreeView extends StatefulWidget {
   const TreeView(
@@ -45,19 +47,18 @@ class _TreeViewState extends State<TreeView> {
     await Future.delayed(Duration(milliseconds: isKill ? 200 : 1000));
 
     if (node.father == null) {
-      graph.addNode(Node.Id('(${node.x}, ${node.y}), ${node.index}'));
+      graph.addNode(Node.Id('${node.index}')..addValue(node));
     } else {
-      final child = Node.Id('(${node.x}, ${node.y}), ${node.index}');
-      final parent = Node.Id(
-          '(${node.father!.x}, ${node.father!.y}), ${node.father!.index}');
+      final child = Node.Id('${node.index}')..addValue(node);
+      final parent = Node.Id('${node.father!.index}');
       graph.addEdge(parent, child);
     }
     if (isGoal) {
-      nodeGoal = '(${node.x}, ${node.y}), ${node.index}';
+      nodeGoal = '${node.index}';
     }
 
     if (isKill) {
-      nodeKill.add('(${node.x}, ${node.y}), ${node.index}');
+      nodeKill.add('${node.index}');
     }
 
     streamController.add(true);
@@ -129,61 +130,12 @@ class _TreeViewState extends State<TreeView> {
                   BuchheimWalkerAlgorithm(builder, TreeEdgeRenderer(builder)),
               paint: paint,
               builder: (Node node) {
-                final String id = node.key!.value.toString();
-                return nodeWidget(null,
-                    isGoal: id == nodeGoal,
-                    isKill: nodeKill.contains(id),
-                    text: node.key!.value.toString());
+                final String id = node.id;
+                return NodeWidget(node.value,
+                    isGoal: nodeGoal == id, isKill: nodeKill.contains(id));
               },
             ),
           );
         });
-  }
-
-  Widget nodeWidget(BaseNode? node,
-      {bool isRoot = false,
-      bool isGoal = false,
-      bool isKill = false,
-      String text = ''}) {
-    late final Color color;
-
-    if (isRoot) {
-      color = Colors.amber.shade100;
-    } else if (isGoal) {
-      color = Colors.green.shade100;
-    } else if (isKill) {
-      color = Colors.red.shade100;
-    } else {
-      color = Colors.blue.shade100;
-    }
-
-    return Stack(
-      children: [
-        Container(
-          padding: EdgeInsets.all(16),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4), color: color),
-          child: Text(node?.toString() ?? text),
-        ),
-        if (isGoal)
-          Positioned(
-            top: 2,
-            right: 10,
-            child: Icon(
-              Icons.flag,
-              color: Colors.green,
-            ),
-          ),
-        if (isKill)
-          Positioned(
-            top: 2,
-            right: 10,
-            child: Icon(
-              Icons.close,
-              color: Colors.red,
-            ),
-          ),
-      ],
-    );
   }
 }
