@@ -2,6 +2,7 @@ import 'package:proyecto_ia/algorithms/breadth_first_search.dart';
 import 'package:proyecto_ia/algorithms/greedy_search.dart';
 import 'package:proyecto_ia/algorithms/uniform_cost.dart';
 import 'package:proyecto_ia/algorithms/depth_first_search.dart';
+import 'package:proyecto_ia/algorithms/depth_limited_search.dart';
 import 'package:proyecto_ia/models/base_node.dart';
 import 'package:proyecto_ia/models/search_algorithm.dart';
 
@@ -44,6 +45,12 @@ class SearchAlgorithmController {
           advanceOrders: advanceOrders,
           goalX: goalX,
           goalY: goalY),
+      'Depth Limited Search': DepthLimitedSearch(
+          board: board,
+          advanceOrders: advanceOrders,
+          goalX: goalX,
+          goalY: goalY,
+          depthLimit: 7),
     };
 
     _nodeContex.clear();
