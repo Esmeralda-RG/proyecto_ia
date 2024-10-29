@@ -13,7 +13,7 @@ class DepthFirstSearch extends SearchAlgorithm {
 
   @override
   Future<List<BaseNode>?> search(
-      Future<void> Function(BaseNode, [bool]) renderNode,
+      Future<void> Function(BaseNode, {bool isGoal, bool isKill}) renderNode,
       int maxIterations) async {
     final initialNode = _stack.last;
 
@@ -22,11 +22,12 @@ class DepthFirstSearch extends SearchAlgorithm {
       final current = _stack.removeLast();
 
       if (current.x == goalX && current.y == goalY) {
-        await renderNode(current, true);
+        await renderNode(current, isGoal: true);
         return [];
       }
 
       final List<BaseNode> neighbors = [];
+      bool isKill = true;
       for (var advance in advanceOrders) {
         int newX = current.x + advance[0];
         int newY = current.y + advance[1];
@@ -35,6 +36,7 @@ class DepthFirstSearch extends SearchAlgorithm {
             current.father?.x == newX && current.father?.y == newY;
 
         if (isValid(newX, newY) && !isGrandparent) {
+          isKill = false;
           final neighbor = BaseNode(newX, newY, currentIndex++,
               getCost(current), getHeuristic(newX, newY), level, current);
           neighbors.add(neighbor);
@@ -45,8 +47,12 @@ class DepthFirstSearch extends SearchAlgorithm {
       }
       _stack.addAll(neighbors.reversed);
 
+      if (isKill) {
+        await renderNode(current, isKill: true);
+      }
+
       if (hasReachedMaxIterations(current, _stack.last, maxIterations)) {
-        return _stack.reversed.toList();    
+        return _stack.reversed.toList();
       }
     }
     return null;

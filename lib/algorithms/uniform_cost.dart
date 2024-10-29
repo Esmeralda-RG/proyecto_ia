@@ -30,10 +30,10 @@ class UniformCost extends SearchAlgorithm {
   final PriorityQueue<Node> _queue = PriorityQueue<Node>();
   final List<Node> _temporaryNodes = [];
 
-
   @override
   Future<List<BaseNode>?> search(
-      Future<void> Function(BaseNode node, [bool isGoal]) renderNode,
+      Future<void> Function(BaseNode node, {bool isGoal, bool isKill})
+          renderNode,
       int maxIterations) async {
     final initialNode = _queue.first;
     await renderNode(initialNode);
@@ -41,10 +41,11 @@ class UniformCost extends SearchAlgorithm {
     while (_queue.isNotEmpty) {
       Node current = _queue.removeFirst();
       if (current.x == goalX && current.y == goalY) {
-        await renderNode(current, true);
+        await renderNode(current, isGoal: true);
         return [];
       }
 
+      bool isKill = true;
       for (var advance in advanceOrders) {
         int newX = current.x + advance[0];
         int newY = current.y + advance[1];
@@ -54,6 +55,7 @@ class UniformCost extends SearchAlgorithm {
             current.father?.x == newX && current.father?.y == newY;
 
         if (isValid(newX, newY) && !isGrandparent) {
+          isKill = false;
           final neighbor = Node(newX, newY, currentIndex++, getCost(current),
               getHeuristic(newX, newY), level, current);
           _queue.add(neighbor);
@@ -62,6 +64,11 @@ class UniformCost extends SearchAlgorithm {
           await renderNode(neighbor);
         }
       }
+
+      if (isKill) {
+        await renderNode(current, isKill: true);
+      }
+
       _temporaryNodes.removeWhere((element) => element.index == current.index);
       if (hasReachedMaxIterations(current, _queue.first, maxIterations)) {
         return _temporaryNodes;
@@ -75,8 +82,8 @@ class UniformCost extends SearchAlgorithm {
   void setupNodeContext(List<BaseNode> nodes) {
     _queue.clear();
     for (var context in nodes) {
-      final node =  Node(
-          context.x, context.y, context.index, context.cost, context.heuristic, context.level, context.father);
+      final node = Node(context.x, context.y, context.index, context.cost,
+          context.heuristic, context.level, context.father);
       _queue.add(node);
       _temporaryNodes.add(node);
     }

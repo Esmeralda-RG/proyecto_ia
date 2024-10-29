@@ -12,10 +12,9 @@ class BreadthFirstSearch extends SearchAlgorithm {
 
   final Queue<BaseNode> _queue = Queue<BaseNode>();
 
-
   @override
   Future<List<BaseNode>?> search(
-      Future<void> Function(BaseNode, [bool]) renderNode,
+      Future<void> Function(BaseNode, {bool isGoal, bool isKill}) renderNode,
       int maxIterations) async {
     final initialNode = _queue.first;
 
@@ -24,10 +23,10 @@ class BreadthFirstSearch extends SearchAlgorithm {
       final current = _queue.removeFirst();
 
       if (current.x == goalX && current.y == goalY) {
-        await renderNode(current, true);
+        await renderNode(current, isGoal: true);
         return [];
       }
-
+      bool isKill = true;
       for (var i = 0; i < advanceOrders.length; i++) {
         var advance = advanceOrders[i];
         int newX = current.x + advance[0];
@@ -37,12 +36,17 @@ class BreadthFirstSearch extends SearchAlgorithm {
             current.father?.x == newX && current.father?.y == newY;
 
         if (isValid(newX, newY) && !isGrandparent) {
+          isKill = false;
           final neighbor = BaseNode(newX, newY, currentIndex++,
               getCost(current), getHeuristic(newX, newY), level, current);
           _queue.add(neighbor);
           setNodeIterations(neighbor);
           await renderNode(neighbor);
         }
+      }
+
+      if (isKill) {
+        await renderNode(current, isKill: true);
       }
 
       if (hasReachedMaxIterations(current, _queue.first, maxIterations, true)) {

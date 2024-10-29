@@ -9,7 +9,7 @@ class SearchAlgorithmController {
   final List<List<int>> board;
   final List<List<int>> advanceOrders;
   final int startX, startY, goalX, goalY;
-  final Future<void> Function(BaseNode, [bool]) renderNode;
+  final Future<void> Function(BaseNode, {bool isGoal, bool isKill}) renderNode;
   final Function(String) onAlgorithmChange;
   final Future<int> Function(String) getMaxIterations;
 

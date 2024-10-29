@@ -15,9 +15,9 @@ abstract class SearchAlgorithm {
   final Map<int, int> expandedNodes = {};
   int currentIndex = 0;
 
-
   Future<List<BaseNode>?> search(
-      Future<void> Function(BaseNode, [bool]) renderNode, int maxIterations);
+      Future<void> Function(BaseNode, {bool isGoal, bool isKill}) renderNode,
+      int maxIterations);
 
   List<BaseNode> getPath(BaseNode node) {
     final List<BaseNode> path = [];
@@ -43,7 +43,7 @@ abstract class SearchAlgorithm {
 
   int isLevel(BaseNode current) {
     int level = current.level + 1;
-    return level; 
+    return level;
   }
 
   bool isValid(int x, int y) {

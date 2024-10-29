@@ -37,11 +37,12 @@ class _TreeViewState extends State<TreeView> {
     ..strokeWidth = 1
     ..style = PaintingStyle.stroke;
 
-  int xGoalParent = -1;
-  int yGoalParent = -1;
+  String nodeGoal = '';
+  final List<String> nodeKill = [];
 
-  Future<void> renderNode(BaseNode node, [bool isGoal = false]) async {
-    await Future.delayed(Duration(seconds: 1));
+  Future<void> renderNode(BaseNode node,
+      {bool isGoal = false, bool isKill = false}) async {
+    await Future.delayed(Duration(milliseconds: isKill ? 200 : 1000));
 
     if (node.father == null) {
       graph.addNode(Node.Id('(${node.x}, ${node.y}), ${node.index}'));
@@ -51,12 +52,15 @@ class _TreeViewState extends State<TreeView> {
           '(${node.father!.x}, ${node.father!.y}), ${node.father!.index}');
       graph.addEdge(parent, child);
     }
-    streamController.add(isGoal);
     if (isGoal) {
-      xGoalParent = node.father?.x ?? -1;
-      yGoalParent = node.father?.y ?? -1;
-      streamController.close();
+      nodeGoal = '(${node.x}, ${node.y}), ${node.index}';
     }
+
+    if (isKill) {
+      nodeKill.add('(${node.x}, ${node.y}), ${node.index}');
+    }
+
+    streamController.add(true);
   }
 
   Future<int> getIterations(String algorithm) async {
@@ -125,7 +129,11 @@ class _TreeViewState extends State<TreeView> {
                   BuchheimWalkerAlgorithm(builder, TreeEdgeRenderer(builder)),
               paint: paint,
               builder: (Node node) {
-                return nodeWidget(null, text: node.key!.value.toString());
+                final String id = node.key!.value.toString();
+                return nodeWidget(null,
+                    isGoal: id == nodeGoal,
+                    isKill: nodeKill.contains(id),
+                    text: node.key!.value.toString());
               },
             ),
           );
@@ -133,12 +141,21 @@ class _TreeViewState extends State<TreeView> {
   }
 
   Widget nodeWidget(BaseNode? node,
-      {bool isRoot = false, bool isGoal = false, String text = ''}) {
-    final color = isRoot
-        ? Colors.green.shade100
-        : isGoal
-            ? Colors.red.shade100
-            : Colors.blue.shade100;
+      {bool isRoot = false,
+      bool isGoal = false,
+      bool isKill = false,
+      String text = ''}) {
+    late final Color color;
+
+    if (isRoot) {
+      color = Colors.amber.shade100;
+    } else if (isGoal) {
+      color = Colors.green.shade100;
+    } else if (isKill) {
+      color = Colors.red.shade100;
+    } else {
+      color = Colors.blue.shade100;
+    }
 
     return Stack(
       children: [
@@ -150,10 +167,19 @@ class _TreeViewState extends State<TreeView> {
         ),
         if (isGoal)
           Positioned(
-            top: -10,
-            right: 0,
+            top: 2,
+            right: 10,
             child: Icon(
               Icons.flag,
+              color: Colors.green,
+            ),
+          ),
+        if (isKill)
+          Positioned(
+            top: 2,
+            right: 10,
+            child: Icon(
+              Icons.close,
               color: Colors.red,
             ),
           ),
