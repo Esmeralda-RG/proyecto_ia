@@ -32,6 +32,7 @@ class BreadthFirstSearch extends SearchAlgorithm {
         int newX = current.x + advance[0];
         int newY = current.y + advance[1];
         final level = isLevel(current);
+
         bool isGrandparent =
             current.father?.x == newX && current.father?.y == newY;
 
@@ -39,6 +40,7 @@ class BreadthFirstSearch extends SearchAlgorithm {
           isKill = false;
           final neighbor = BaseNode(newX, newY, currentIndex++,
               getCost(current), getHeuristic(newX, newY), level, current);
+          neighbor.orderInLevel = isOrderInLevel(neighbor);
           _queue.add(neighbor);
           setNodeIterations(neighbor);
           await renderNode(neighbor);

@@ -13,6 +13,8 @@ abstract class SearchAlgorithm {
   final List<List<int>> advanceOrders;
   final int goalX, goalY;
   final Map<int, int> expandedNodes = {};
+  final Map<int, int> orderCounter = {};
+  int order = 0;
   int currentIndex = 0;
 
   Future<List<BaseNode>?> search(
@@ -44,6 +46,14 @@ abstract class SearchAlgorithm {
   int isLevel(BaseNode current) {
     int level = current.level + 1;
     return level;
+  }
+
+  int isOrderInLevel(BaseNode current) {
+    if (orderCounter[current.level] == null) {
+      orderCounter[current.level] = 0;
+    }
+    orderCounter[current.level] = orderCounter[current.level]! + 1;
+    return orderCounter[current.level]!;
   }
 
   bool isValid(int x, int y) {

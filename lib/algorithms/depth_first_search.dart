@@ -39,6 +39,7 @@ class DepthFirstSearch extends SearchAlgorithm {
           isKill = false;
           final neighbor = BaseNode(newX, newY, currentIndex++,
               getCost(current), getHeuristic(newX, newY), level, current);
+          neighbor.orderInLevel = isOrderInLevel(neighbor);
           neighbors.add(neighbor);
           setNodeIterations(neighbor);
           await renderNode(neighbor);
@@ -61,7 +62,7 @@ class DepthFirstSearch extends SearchAlgorithm {
   @override
   void setupNodeContext(List<BaseNode> nodes) {
     _stack.clear();
-    for (var node in nodes) {
+    for (var node in nodes.reversed) {
       _stack.add(node);
     }
   }
