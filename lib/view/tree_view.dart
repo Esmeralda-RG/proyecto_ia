@@ -37,26 +37,35 @@ class _TreeViewState extends State<TreeView> {
     ..strokeWidth = 1
     ..style = PaintingStyle.stroke;
 
-  int xGoalParent = -1;
-  int yGoalParent = -1;
+  bool hasGoalBeenFound = false;
+  String? goalNodeId; // variable para almaccenar id
 
   Future<void> renderNode(BaseNode node, [bool isGoal = false]) async {
     await Future.delayed(Duration(seconds: 1));
 
+    final child = Node.Id('(${node.x}, ${node.y}), ${node.index}'); 
     if (node.father == null) {
-      graph.addNode(Node.Id('(${node.x}, ${node.y}), ${node.index}'));
+      //graph.addNode(Node.Id('(${node.x}, ${node.y}), ${node.index}'));
+      graph.addNode(child);
     } else {
-      final child = Node.Id('(${node.x}, ${node.y}), ${node.index}');
       final parent = Node.Id(
           '(${node.father!.x}, ${node.father!.y}), ${node.father!.index}');
       graph.addEdge(parent, child);
     }
-    streamController.add(isGoal);
-    if (isGoal) {
-      xGoalParent = node.father?.x ?? -1;
-      yGoalParent = node.father?.y ?? -1;
-    }
+
+    //pasar a streamcontroller cuando es el primer nodo meta
+    final isGoalNode = node.x == widget.goalX && node.y == widget.goalY;
+    if (isGoalNode && !hasGoalBeenFound) {
+          hasGoalBeenFound = true;
+          goalNodeId = child.key!.value; //id del primer nodo meta encontrado
+          streamController.add(true);
+        }else{
+          streamController.add(false);
+        }
+      
+        
   }
+
 
   Future<int> getIterations(String algorithm) async {
     final iterations = await showDialog<int>(
@@ -124,7 +133,10 @@ class _TreeViewState extends State<TreeView> {
                   BuchheimWalkerAlgorithm(builder, TreeEdgeRenderer(builder)),
               paint: paint,
               builder: (Node node) {
-                return nodeWidget(null, text: node.key!.value.toString());
+                return nodeWidget(
+                  null,
+                  text: node.key!.value.toString(),
+                );
               },
             ),
           );
@@ -133,9 +145,10 @@ class _TreeViewState extends State<TreeView> {
 
   Widget nodeWidget(BaseNode? node,
       {bool isRoot = false, bool isGoal = false, String text = ''}) {
+    final isGoalNode = (goalNodeId != null && text == goalNodeId);
     final color = isRoot
         ? Colors.green.shade100
-        : isGoal
+        : isGoalNode
             ? Colors.red.shade100
             : Colors.blue.shade100;
 
@@ -147,7 +160,7 @@ class _TreeViewState extends State<TreeView> {
               borderRadius: BorderRadius.circular(4), color: color),
           child: Text(node?.toString() ?? text),
         ),
-        if (isGoal)
+        if (isGoalNode)
           Positioned(
             top: -10,
             right: 0,
