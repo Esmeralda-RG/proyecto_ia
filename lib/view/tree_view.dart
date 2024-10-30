@@ -102,6 +102,7 @@ class _TreeViewState extends State<TreeView> {
   void dispose() {
     executionSearch.ignore();
     streamController.close();
+    _algorithmController.dispose();
     super.dispose();
   }
 

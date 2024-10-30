@@ -47,7 +47,8 @@ class SearchAlgorithmController {
     };
 
     _nodeContex.clear();
-    _nodeContex.add(BaseNode(startX, startY, 0, 0, 0, 0, null)..orderInLevel = 0);
+    _nodeContex
+        .add(BaseNode(startX, startY, 0, 0, 0, 0, null)..orderInLevel = 0);
   }
 
   late final Map<String, SearchAlgorithm> _algorithms;
@@ -81,5 +82,10 @@ class SearchAlgorithmController {
       print('Solution found with $key');
       return;
     }
+  }
+
+  void dispose() {
+    SearchAlgorithm.nodesByFather.clear();
+    SearchAlgorithm.orderInLevel.clear();
   }
 }

@@ -4,7 +4,7 @@ class BaseNode implements Comparable<BaseNode> {
   final int heuristic;
   final int index;
   final int level;
-  late final int orderInLevel;
+  late int orderInLevel;
   BaseNode? father;
 
   BaseNode(this.x, this.y, this.index, this.cost, this.heuristic, this.level,
