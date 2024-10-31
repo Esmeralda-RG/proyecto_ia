@@ -1,4 +1,4 @@
-class BaseNode implements Comparable<BaseNode> {
+class BaseNode {
   final int x, y;
   final int cost;
   final int heuristic;
@@ -11,9 +11,4 @@ class BaseNode implements Comparable<BaseNode> {
 
   @override
   String toString() => '($x, $y), level: $level';
-
-  @override
-  int compareTo(BaseNode other) {
-    throw UnimplementedError();
-  }
 }

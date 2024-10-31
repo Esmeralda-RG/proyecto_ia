@@ -2,15 +2,16 @@ import 'package:collection/collection.dart' show PriorityQueue;
 import 'package:proyecto_ia/models/base_node.dart';
 import 'package:proyecto_ia/models/search_algorithm.dart';
 
-class Node extends BaseNode {
+class Node extends BaseNode implements Comparable<Node> {
   Node(super.x, super.y, super.index, super.cost, super.heuristic, super.level,
+      this.order,
       [super.father]);
-
+  final int order;
   @override
-  int compareTo(BaseNode other) {
+  int compareTo(Node other) {
     int costComparison = cost.compareTo(other.cost);
     if (costComparison == 0) {
-      return index.compareTo(other.index);
+      return order.compareTo(other.order);
     }
     return costComparison;
   }
@@ -56,8 +57,9 @@ class UniformCost extends SearchAlgorithm {
 
         if (isValid(newX, newY) && !isGrandparent) {
           isKill = false;
+          int order = current.order + 1;
           final neighbor = Node(newX, newY, currentIndex++, getCost(current),
-              getHeuristic(newX, newY), level, current);
+              getHeuristic(newX, newY), level, order, current);
           _queue.add(neighbor);
           setNodeIterations(neighbor);
           await renderNode(neighbor);
@@ -83,9 +85,9 @@ class UniformCost extends SearchAlgorithm {
   @override
   void setupNodeContext(List<BaseNode> nodes) {
     _queue.clear();
-    for (var context in nodes) {
-      final node = Node(context.x, context.y, context.index, context.cost,
-          context.heuristic, context.level, context.father);
+    for (var i = 0; i < nodes.length; i++) {
+      final node = Node(nodes[i].x, nodes[i].y, nodes[i].index, nodes[i].cost,
+          nodes[i].heuristic, nodes[i].level, i, nodes[i].father);
       _queue.add(node);
     }
   }
