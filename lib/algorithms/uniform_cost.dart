@@ -16,7 +16,7 @@ class Node extends BaseNode {
   }
 
   @override
-  String toString() => '($x, $y) -> Cost: $cost, Level: $level, order: $orderInLevel';
+  String toString() => '($x, $y) -> Cost: $cost, Level: $level';
 }
 
 class UniformCost extends SearchAlgorithm {
@@ -59,7 +59,6 @@ class UniformCost extends SearchAlgorithm {
           
           final neighbor = Node(newX, newY, currentIndex++, getCost(current),
               getHeuristic(newX, newY), level, current);
-          neighbor.orderInLevel = isOrderInLevel(neighbor);
           _queue.add(neighbor);
           setNodeIterations(neighbor);
           _temporaryNodes.add(neighbor);
@@ -86,7 +85,7 @@ class UniformCost extends SearchAlgorithm {
     for (var context in nodes) {
       final node = Node(context.x, context.y, context.index, context.cost,
           context.heuristic, context.level, context.father);
-      _queue.add(node..orderInLevel = context.orderInLevel);
+      _queue.add(node);
       _temporaryNodes.add(node);
     }
   }

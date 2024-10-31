@@ -16,7 +16,7 @@ class Node extends BaseNode {
   }
 
   @override
-  String toString() => '($x, $y) -> Heuristic: $heuristic, level: $level, order: $orderInLevel';
+  String toString() => '($x, $y) -> Heuristic: $heuristic, level: $level';
 }
 
 class GreedySearch extends SearchAlgorithm {
@@ -61,7 +61,6 @@ class GreedySearch extends SearchAlgorithm {
           int cost = getCost(current);
           Node neighbor =
               Node(newX, newY, currentIndex++, cost, heuristic, level, current);
-          neighbor.orderInLevel = isOrderInLevel(neighbor);
           _queue.add(neighbor);
           setNodeIterations(neighbor);
           _temporaryNodes.add(neighbor);
@@ -87,7 +86,7 @@ class GreedySearch extends SearchAlgorithm {
     for (var context in nodes) {
       final node = Node(context.x, context.y, context.index, context.cost,
           context.heuristic, context.level, context.father);
-      _queue.add(node..orderInLevel = context.orderInLevel);
+      _queue.add(node);
       _temporaryNodes.add(node);
     }
   }

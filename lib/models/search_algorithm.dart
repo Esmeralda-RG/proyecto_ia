@@ -47,10 +47,6 @@ abstract class SearchAlgorithm {
     return level;
   }
 
-  int isOrderInLevel(BaseNode current) {
-    return 0;
-  }
-
   bool isValid(int x, int y) {
     return x >= 0 &&
         x < board.length &&

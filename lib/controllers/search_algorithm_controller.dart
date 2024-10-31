@@ -53,7 +53,7 @@ class SearchAlgorithmController {
 
     _nodeContex.clear();
     _nodeContex
-        .add(BaseNode(startX, startY, 0, 0, 0, 0, null)..orderInLevel = 0);
+        .add(BaseNode(startX, startY, 0, 0, 0, 0, null));
   }
 
   late final Map<String, SearchAlgorithm> _algorithms;

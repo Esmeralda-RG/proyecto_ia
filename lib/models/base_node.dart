@@ -4,14 +4,13 @@ class BaseNode implements Comparable<BaseNode> {
   final int heuristic;
   final int index;
   final int level;
-  late int orderInLevel;
   BaseNode? father;
 
   BaseNode(this.x, this.y, this.index, this.cost, this.heuristic, this.level,
       [this.father]);
 
   @override
-  String toString() => '($x, $y), level: $level, order: $orderInLevel';
+  String toString() => '($x, $y), level: $level';
 
   @override
   int compareTo(BaseNode other) {

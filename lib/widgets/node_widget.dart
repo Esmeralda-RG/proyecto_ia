@@ -38,7 +38,7 @@ class NodeWidget extends StatelessWidget {
                 Text('(${node.x}, ${node.y})'),
                 SizedBox(height: 2),
                 Text(
-                  'C: ${node.cost}  H: ${node.heuristic} I: ${node.index} L: ${node.level} O: ${node.orderInLevel}',
+                  'C: ${node.cost}  H: ${node.heuristic} I: ${node.index} L: ${node.level}',
                   style: TextStyle(fontWeight: FontWeight.w400, fontSize: 12),
                 )
               ],

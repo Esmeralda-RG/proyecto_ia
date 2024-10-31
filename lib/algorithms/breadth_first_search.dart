@@ -40,7 +40,6 @@ class BreadthFirstSearch extends SearchAlgorithm {
           isKill = false;
           final neighbor = BaseNode(newX, newY, currentIndex++,
               getCost(current), getHeuristic(newX, newY), level, current);
-          neighbor.orderInLevel = isOrderInLevel(neighbor);
           _queue.add(neighbor);
           setNodeIterations(neighbor);
           await renderNode(neighbor);
