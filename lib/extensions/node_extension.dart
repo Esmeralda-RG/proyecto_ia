@@ -6,7 +6,7 @@ extension NodeExtension on Node {
     return key?.value.toString() ?? '';
   }
 
-  static List<BaseNode> nodes = [];
+  static final List<BaseNode> nodes = [];
 
   void addValue(BaseNode node) {
     nodes.add(node);
