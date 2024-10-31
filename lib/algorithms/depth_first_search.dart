@@ -42,7 +42,6 @@ class DepthFirstSearch extends SearchAlgorithm {
           neighbors.add(neighbor);
           setNodeIterations(neighbor);
           await renderNode(neighbor);
-          print(neighbor);
         }
       }
       _stack.addAll(neighbors.reversed);
