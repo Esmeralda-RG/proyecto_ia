@@ -44,6 +44,11 @@ class SearchAlgorithmController {
           advanceOrders: advanceOrders,
           goalX: goalX,
           goalY: goalY),
+      'Depth Limited Search': DepthFirstSearch(
+          board: board,
+          advanceOrders: advanceOrders,
+          goalX: goalX,
+          goalY: goalY),
     };
 
     _nodeContex.clear();

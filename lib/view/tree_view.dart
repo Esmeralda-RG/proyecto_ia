@@ -39,8 +39,8 @@ class _TreeViewState extends State<TreeView> {
     ..strokeWidth = 1
     ..style = PaintingStyle.stroke;
 
-  String nodeGoal = '';
-  final List<String> nodeKill = [];
+  String goalNodeId = '';
+  final List<String> killNodesId = [];
 
   Future<void> renderNode(BaseNode node,
       {bool isGoal = false, bool isKill = false}) async {
@@ -54,11 +54,11 @@ class _TreeViewState extends State<TreeView> {
       graph.addEdge(parent, child);
     }
     if (isGoal) {
-      nodeGoal = '${node.index}';
+      goalNodeId = '${node.index}';
     }
 
     if (isKill) {
-      nodeKill.add('${node.index}');
+      killNodesId.add('${node.index}');
     }
 
     streamController.add(true);
@@ -133,7 +133,7 @@ class _TreeViewState extends State<TreeView> {
               builder: (Node node) {
                 final String id = node.id;
                 return NodeWidget(node.value,
-                    isGoal: nodeGoal == id, isKill: nodeKill.contains(id));
+                    isGoal: goalNodeId == id, isKill: killNodesId.contains(id));
               },
             ),
           );
