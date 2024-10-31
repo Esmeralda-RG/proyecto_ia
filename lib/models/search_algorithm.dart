@@ -13,8 +13,6 @@ abstract class SearchAlgorithm {
   final List<List<int>> advanceOrders;
   final int goalX, goalY;
   final Map<int, int> expandedNodes = {};
-  static final Map<int, List<int>> nodesByFather = {};
-  static Map<int, Map<int, int>> orderInLevel = {};
   int order = 0;
   int currentIndex = 0;
 
@@ -49,45 +47,8 @@ abstract class SearchAlgorithm {
     return level;
   }
 
-  void setNodesByFather(BaseNode current) {
-    if (nodesByFather[current.father!.index] == null) {
-      nodesByFather[current.father!.index] = [];
-    }
-    nodesByFather[current.father!.index]!.add(current.index);
-  }
-
   int isOrderInLevel(BaseNode current) {
-    if (orderInLevel[current.level] == null) {
-      orderInLevel[current.level] = {};
-    }
-    setNodesByFather(current);
-    orderInLevel[current.level]![current.father!.orderInLevel] =
-        nodesByFather[current.father!.index]!.length;
-    sortOrderInLevel();
-    int order = 0;
-    int childsFather = 0;
-
-    for (var key in orderInLevel[current.level]!.keys) {
-      int initial = order;
-      childsFather += orderInLevel[current.level]![key]!;
-      for (var i = initial; i < childsFather; i++) {
-        order = i;
-      }
-    }
-    return order;
-  }
-
-  void sortOrderInLevel() {
-    final keys = orderInLevel.keys.toList();
-    for (var level in keys) {
-      final keyOrderFather = orderInLevel[level]!.keys.toList();
-      keyOrderFather.sort();
-      final Map<int, int> newOrderInLevel = {};
-      for (var key in keyOrderFather) {
-        newOrderInLevel[key] = orderInLevel[level]![key]!;
-      }
-      orderInLevel[level] = newOrderInLevel;
-    }
+    return 0;
   }
 
   bool isValid(int x, int y) {

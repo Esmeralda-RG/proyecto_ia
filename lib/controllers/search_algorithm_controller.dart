@@ -84,8 +84,5 @@ class SearchAlgorithmController {
     }
   }
 
-  void dispose() {
-    SearchAlgorithm.nodesByFather.clear();
-    SearchAlgorithm.orderInLevel.clear();
-  }
+  void dispose() {}
 }
