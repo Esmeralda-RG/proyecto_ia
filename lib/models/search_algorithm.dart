@@ -15,7 +15,6 @@ abstract class SearchAlgorithm {
   final Map<int, int> expandedNodes = {};
   static final List<int> orderIndexes = [0];
 
-  int order = 0;
   int currentIndex = 0;
 
   Future<List<BaseNode>?> search(
