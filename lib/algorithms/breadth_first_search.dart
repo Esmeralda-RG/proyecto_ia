@@ -27,6 +27,7 @@ class BreadthFirstSearch extends SearchAlgorithm {
         return [];
       }
       bool isKill = true;
+      final List<BaseNode> temporaryNodes = [];
       for (var i = 0; i < advanceOrders.length; i++) {
         var advance = advanceOrders[i];
         int newX = current.x + advance[0];
@@ -43,6 +44,7 @@ class BreadthFirstSearch extends SearchAlgorithm {
           _queue.add(neighbor);
           setNodeIterations(neighbor);
           await renderNode(neighbor);
+          temporaryNodes.add(neighbor);
         }
       }
 
@@ -50,8 +52,11 @@ class BreadthFirstSearch extends SearchAlgorithm {
         await renderNode(current, isKill: true);
       }
 
+      updateNodeIndex(
+          temporaryNodes.map((n) => n.index).toList(), current.index);
+
       if (hasReachedMaxIterations(current, _queue.first, maxIterations, true)) {
-        return _queue.toList();
+        return orderNodes(_queue.toList());
       }
     }
 

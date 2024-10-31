@@ -28,7 +28,6 @@ class UniformCost extends SearchAlgorithm {
   });
 
   final PriorityQueue<Node> _queue = PriorityQueue<Node>();
-  final List<Node> _temporaryNodes = [];
 
   @override
   Future<List<BaseNode>?> search(
@@ -46,6 +45,7 @@ class UniformCost extends SearchAlgorithm {
       }
 
       bool isKill = true;
+      final List<BaseNode> temporaryNodes = [];
       for (var advance in advanceOrders) {
         int newX = current.x + advance[0];
         int newY = current.y + advance[1];
@@ -56,13 +56,12 @@ class UniformCost extends SearchAlgorithm {
 
         if (isValid(newX, newY) && !isGrandparent) {
           isKill = false;
-          
           final neighbor = Node(newX, newY, currentIndex++, getCost(current),
               getHeuristic(newX, newY), level, current);
           _queue.add(neighbor);
           setNodeIterations(neighbor);
-          _temporaryNodes.add(neighbor);
           await renderNode(neighbor);
+          temporaryNodes.add(neighbor);
         }
       }
 
@@ -70,9 +69,11 @@ class UniformCost extends SearchAlgorithm {
         await renderNode(current, isKill: true);
       }
 
-      _temporaryNodes.removeWhere((element) => element.index == current.index);
+      updateNodeIndex(
+          temporaryNodes.map((n) => n.index).toList(), current.index);
+
       if (hasReachedMaxIterations(current, _queue.first, maxIterations)) {
-        return _temporaryNodes;
+        return orderNodes(_queue.toList());
       }
     }
 
@@ -86,7 +87,6 @@ class UniformCost extends SearchAlgorithm {
       final node = Node(context.x, context.y, context.index, context.cost,
           context.heuristic, context.level, context.father);
       _queue.add(node);
-      _temporaryNodes.add(node);
     }
   }
 }

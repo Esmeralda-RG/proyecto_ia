@@ -81,10 +81,10 @@ abstract class SearchAlgorithm {
     }
   }
 
-  void updateNodeIndex(List<int> nodes, int indexFather) {  
-      int index = orderIndexes.indexOf(indexFather);
+  void updateNodeIndex(List<int> nodes, int indexFather) {
+    int index = orderIndexes.indexOf(indexFather);
 
-      orderIndexes.replaceRange(index, index+1, nodes);
+    orderIndexes.replaceRange(index, index + 1, nodes);
   }
 
   List<BaseNode> orderNodes(List<BaseNode> nodes) {
@@ -97,7 +97,7 @@ abstract class SearchAlgorithm {
       }
     }
     return orderedNodes;
-  }//hola
+  }
 
   bool hasReachedMaxIterations(
       BaseNode current, BaseNode next, int maxIterations,
