@@ -13,6 +13,8 @@ abstract class SearchAlgorithm {
   final List<List<int>> advanceOrders;
   final int goalX, goalY;
   final Map<int, int> expandedNodes = {};
+  static final List<int> orderIndexes = [0];
+
   int order = 0;
   int currentIndex = 0;
 
@@ -78,6 +80,24 @@ abstract class SearchAlgorithm {
       expandedNodes[node.index] = expandedNodes[node.father!.index]! + 1;
     }
   }
+
+  void updateNodeIndex(List<int> nodes, int indexFather) {  
+      int index = orderIndexes.indexOf(indexFather);
+
+      orderIndexes.replaceRange(index, index+1, nodes);
+  }
+
+  List<BaseNode> orderNodes(List<BaseNode> nodes) {
+    List<BaseNode> orderedNodes = [];
+    for (var index in orderIndexes) {
+      for (var node in nodes) {
+        if (node.index == index) {
+          orderedNodes.add(node);
+        }
+      }
+    }
+    return orderedNodes;
+  }//hola
 
   bool hasReachedMaxIterations(
       BaseNode current, BaseNode next, int maxIterations,
