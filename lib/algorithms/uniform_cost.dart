@@ -29,12 +29,10 @@ class UniformCost extends SearchAlgorithm {
   });
 
   final PriorityQueue<Node> _queue = PriorityQueue<Node>();
+  final List<BaseNode> _temporaryNodes = [];
 
   @override
-  Future<List<BaseNode>?> search(
-      Future<void> Function(BaseNode node, {bool isGoal, bool isKill})
-          renderNode,
-      int maxIterations) async {
+  Future<List<BaseNode>?> search(renderNode) async {
     final initialNode = _queue.first;
     await renderNode(initialNode);
 
@@ -46,7 +44,7 @@ class UniformCost extends SearchAlgorithm {
       }
 
       bool isKill = true;
-      final List<BaseNode> temporaryNodes = [];
+      _temporaryNodes.clear();
       for (var advance in advanceOrders) {
         int newX = current.x + advance[0];
         int newY = current.y + advance[1];
@@ -61,9 +59,8 @@ class UniformCost extends SearchAlgorithm {
           final neighbor = Node(newX, newY, currentIndex++, getCost(current),
               getHeuristic(newX, newY), level, order, current);
           _queue.add(neighbor);
-          setNodeIterations(neighbor);
           await renderNode(neighbor);
-          temporaryNodes.add(neighbor);
+          _temporaryNodes.add(neighbor);
         }
       }
 
@@ -71,10 +68,10 @@ class UniformCost extends SearchAlgorithm {
         await renderNode(current, isKill: true);
       }
 
-      updateNodeIndex(
-          temporaryNodes.map((n) => n.index).toList(), current.index);
+      updateNodeIndex(_temporaryNodes.map((n) => n.index), current.index);
 
-      if (hasReachedMaxIterations(current, _queue.first, maxIterations)) {
+      if (checkMaxIterationsLimit(
+          _temporaryNodes.firstOrNull ?? _queue.first)) {
         return orderNodes(_queue.toList());
       }
     }

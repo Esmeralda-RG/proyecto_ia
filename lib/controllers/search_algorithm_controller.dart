@@ -52,8 +52,7 @@ class SearchAlgorithmController {
     };
 
     _nodeContex.clear();
-    _nodeContex
-        .add(BaseNode(startX, startY, 0, 0, 0, 0, null));
+    _nodeContex.add(BaseNode(startX, startY, 0, 0, 0, 0, null));
   }
 
   late final Map<String, SearchAlgorithm> _algorithms;
@@ -62,14 +61,14 @@ class SearchAlgorithmController {
 
   Future<void> search() async {
     final keysAlgorithm = _algorithms.keys.toList();
-    keysAlgorithm.shuffle();
+    //keysAlgorithm.shuffle();
     print('Order of algorithms: $keysAlgorithm');
     for (var key in keysAlgorithm) {
       onAlgorithmChange(key);
       final algorithm = _algorithms[key]!;
-      algorithm.initAlgorithm(_nodeContex);
       final maxIterations = await getMaxIterations(key);
-      final newContext = await algorithm.search(renderNode, maxIterations);
+      algorithm.initAlgorithm(_nodeContex, maxIterations);
+      final newContext = await algorithm.search(renderNode);
 
       if (newContext == null) {
         throw Exception('No solution found');
@@ -89,5 +88,7 @@ class SearchAlgorithmController {
     }
   }
 
-  void dispose() {}
+  void dispose() {
+    SearchAlgorithm.dispose();
+  }
 }

@@ -12,14 +12,13 @@ abstract class SearchAlgorithm {
   final List<List<int>> board;
   final List<List<int>> advanceOrders;
   final int goalX, goalY;
-  final Map<int, int> expandedNodes = {};
-  static final List<int> orderIndexes = [0];
+  static final List<int> _orderIndexes = [0];
+  static int _levelIterations = 0;
 
   int currentIndex = 0;
 
   Future<List<BaseNode>?> search(
-      Future<void> Function(BaseNode, {bool isGoal, bool isKill}) renderNode,
-      int maxIterations);
+      Future<void> Function(BaseNode, {bool isGoal, bool isKill}) renderNode);
 
   List<BaseNode> getPath(BaseNode node) {
     final List<BaseNode> path = [];
@@ -66,29 +65,20 @@ abstract class SearchAlgorithm {
 
   void setupNodeContext(List<BaseNode> nodes);
 
-  void initAlgorithm(List<BaseNode> nodes) {
+  void initAlgorithm(List<BaseNode> nodes, int maxIterations) {
     setupNodeContext(nodes);
+    _levelIterations += maxIterations;
     currentIndex = nodes.map((e) => e.index).reduce(max) + 1;
-    for (var node in nodes) {
-      expandedNodes[node.index] = 0;
-    }
   }
 
-  void setNodeIterations(BaseNode node) {
-    if (expandedNodes[node.father!.index] != null) {
-      expandedNodes[node.index] = expandedNodes[node.father!.index]! + 1;
-    }
-  }
-
-  void updateNodeIndex(List<int> nodes, int indexFather) {
-    int index = orderIndexes.indexOf(indexFather);
-
-    orderIndexes.replaceRange(index, index + 1, nodes);
+  void updateNodeIndex(Iterable<int> nodes, int indexFather) {
+    int index = _orderIndexes.indexOf(indexFather);
+    _orderIndexes.replaceRange(index, index + 1, nodes);
   }
 
   List<BaseNode> orderNodes(List<BaseNode> nodes) {
     List<BaseNode> orderedNodes = [];
-    for (var index in orderIndexes) {
+    for (var index in _orderIndexes) {
       for (var node in nodes) {
         if (node.index == index) {
           orderedNodes.add(node);
@@ -98,22 +88,13 @@ abstract class SearchAlgorithm {
     return orderedNodes;
   }
 
-  bool hasReachedMaxIterations(
-      BaseNode current, BaseNode next, int maxIterations,
-      [bool hasComplete = false]) {
-    if (expandedNodes[next.index] == expandedNodes[current.index] &&
-        hasComplete) {
-      return false;
-    }
+  bool checkMaxIterationsLimit(BaseNode next) {
+    return next.level == _levelIterations;
+  }
 
-    if (expandedNodes[next.index] == maxIterations) {
-      return true;
-    }
-
-    if (!hasComplete && expandedNodes.containsValue(maxIterations)) {
-      return true;
-    }
-
-    return false;
+  static void dispose() {
+    _levelIterations = 0;
+    _orderIndexes.clear();
+    _orderIndexes.add(0);
   }
 }
