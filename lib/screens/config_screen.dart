@@ -13,17 +13,13 @@ class ConfigScreen extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     CellType cellType = CellType.undefined;
 
-    final ValueNotifier<Set<Cell>> selectedCellsNotifier =
-        ValueNotifier<Set<Cell>>({});
-    final TextEditingController rowsController =
-        TextEditingController(text: '4');
-    final TextEditingController columnsController =
-        TextEditingController(text: '4');
+    final ValueNotifier<Set<Cell>> selectedCellsNotifier = ValueNotifier<Set<Cell>>({});
+    final TextEditingController rowsController = TextEditingController(text: '4');
+    final TextEditingController columnsController = TextEditingController(text: '4');
+    final TextEditingController iterationsController = TextEditingController(text: '1'); // New controller for iterations
 
-    final ValueNotifier<Cell?> initialPositionNotifier =
-        ValueNotifier<Cell?>(null);
-    final ValueNotifier<Cell?> goalPositionNotifier =
-        ValueNotifier<Cell?>(null);
+    final ValueNotifier<Cell?> initialPositionNotifier = ValueNotifier<Cell?>(null);
+    final ValueNotifier<Cell?> goalPositionNotifier = ValueNotifier<Cell?>(null);
     final List<Cell> walls = [];
     final GlobalKey<FormState> configBoardFormKey = GlobalKey<FormState>();
 
@@ -76,19 +72,16 @@ class ConfigScreen extends StatelessWidget {
                         if (!configBoardFormKey.currentState!.validate()) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text(
-                                  'Por favor, llena los campos correctamente'),
+                              content: Text('Por favor, llena los campos correctamente'),
                             ),
                           );
                           return;
                         }
 
-                        if (initialPositionNotifier.value == null ||
-                            goalPositionNotifier.value == null) {
+                        if (initialPositionNotifier.value == null || goalPositionNotifier.value == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text(
-                                  'Por favor, selecciona la posición inicial y la meta'),
+                              content: Text('Por favor, selecciona la posición inicial y la meta'),
                             ),
                           );
                           return;
@@ -106,6 +99,8 @@ class ConfigScreen extends StatelessWidget {
                           board[element.row][element.column] = 1;
                         }
 
+                        final iterations = int.tryParse(iterationsController.text) ?? 100;
+
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -115,11 +110,30 @@ class ConfigScreen extends StatelessWidget {
                               startY: initialPositionNotifier.value!.column,
                               goalX: goalPositionNotifier.value!.row,
                               goalY: goalPositionNotifier.value!.column,
+                              iterations: int.parse(iterationsController.text),  // Pasar las iteraciones aquí
                             ),
                           ),
                         );
+
                       },
                       formKey: configBoardFormKey,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: TextFormField(
+                        controller: iterationsController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: 'Número de Iteraciones',
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty || int.tryParse(value) == null || int.parse(value) <= 0) {
+                            return 'Introduce un número válido mayor a 0';
+                          }
+                          return null;
+                        },
+                      ),
                     ),
                   ],
                 ),
