@@ -11,44 +11,50 @@ class SearchAlgorithmController {
   final int startX, startY, goalX, goalY;
   final Future<void> Function(BaseNode, {bool isGoal, bool isKill}) renderNode;
   final Function(String) onAlgorithmChange;
-  final Future<int> Function(String) getMaxIterations;
+  final int maxIterations; // Changed from Future<int> Function(String) to int
 
-  SearchAlgorithmController(
-      {required this.board,
-      required this.advanceOrders,
-      required this.startX,
-      required this.startY,
-      required this.goalX,
-      required this.goalY,
-      required this.onAlgorithmChange,
-      required this.getMaxIterations,
-      required this.renderNode}) {
+  SearchAlgorithmController({
+    required this.board,
+    required this.advanceOrders,
+    required this.startX,
+    required this.startY,
+    required this.goalX,
+    required this.goalY,
+    required this.onAlgorithmChange,
+    required this.maxIterations, // Directly accept maxIterations as an int
+    required this.renderNode,
+  }) {
     _algorithms = {
       'Breadth First Search': BreadthFirstSearch(
-          board: board,
-          advanceOrders: advanceOrders,
-          goalX: goalX,
-          goalY: goalY),
+        board: board,
+        advanceOrders: advanceOrders,
+        goalX: goalX,
+        goalY: goalY,
+      ),
       'Greedy Search': GreedySearch(
-          board: board,
-          advanceOrders: advanceOrders,
-          goalX: goalX,
-          goalY: goalY),
+        board: board,
+        advanceOrders: advanceOrders,
+        goalX: goalX,
+        goalY: goalY,
+      ),
       'Uniform Cost': UniformCost(
-          board: board,
-          advanceOrders: advanceOrders,
-          goalX: goalX,
-          goalY: goalY),
+        board: board,
+        advanceOrders: advanceOrders,
+        goalX: goalX,
+        goalY: goalY,
+      ),
       'Depth First Search': DepthFirstSearch(
-          board: board,
-          advanceOrders: advanceOrders,
-          goalX: goalX,
-          goalY: goalY),
+        board: board,
+        advanceOrders: advanceOrders,
+        goalX: goalX,
+        goalY: goalY,
+      ),
       'Depth Limited Search': DepthFirstSearch(
-          board: board,
-          advanceOrders: advanceOrders,
-          goalX: goalX,
-          goalY: goalY),
+        board: board,
+        advanceOrders: advanceOrders,
+        goalX: goalX,
+        goalY: goalY,
+      ),
     };
 
     _nodeContex.clear();
@@ -56,7 +62,6 @@ class SearchAlgorithmController {
   }
 
   late final Map<String, SearchAlgorithm> _algorithms;
-
   final List<BaseNode> _nodeContex = [];
 
   Future<void> search() async {
@@ -66,9 +71,10 @@ class SearchAlgorithmController {
     for (var key in keysAlgorithm) {
       onAlgorithmChange(key);
       final algorithm = _algorithms[key]!;
-      final maxIterations = await getMaxIterations(key);
-      algorithm.initAlgorithm(_nodeContex, maxIterations);
-      final newContext = await algorithm.search(renderNode);
+      algorithm.initAlgorithm(_nodeContex);
+
+      // Use maxIterations directly here
+      final newContext = await algorithm.search(renderNode, maxIterations);
 
       if (newContext == null) {
         throw Exception('No solution found');

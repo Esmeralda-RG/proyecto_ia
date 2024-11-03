@@ -11,6 +11,7 @@ dependencies:
     sdk: flutter
   collection: ^1.18.0
   graphview: ^1.2.0
+  flutter_dropzone: ^4.0.3
 
 dev_dependencies:
   flutter_test:
