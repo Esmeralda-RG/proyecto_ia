@@ -11,7 +11,7 @@ class SearchAlgorithmController {
   final int startX, startY, goalX, goalY;
   final Future<void> Function(BaseNode, {bool isGoal, bool isKill}) renderNode;
   final Function(String) onAlgorithmChange;
-  final int maxIterations; // Changed from Future<int> Function(String) to int
+  final int maxIterations;
 
   SearchAlgorithmController({
     required this.board,
@@ -21,74 +21,68 @@ class SearchAlgorithmController {
     required this.goalX,
     required this.goalY,
     required this.onAlgorithmChange,
-    required this.maxIterations, // Directly accept maxIterations as an int
+    required this.maxIterations,
     required this.renderNode,
   }) {
     _algorithms = {
       'Breadth First Search': BreadthFirstSearch(
-        board: board,
-        advanceOrders: advanceOrders,
-        goalX: goalX,
-        goalY: goalY,
-      ),
+          board: board,
+          advanceOrders: advanceOrders,
+          goalX: goalX,
+          goalY: goalY),
       'Greedy Search': GreedySearch(
-        board: board,
-        advanceOrders: advanceOrders,
-        goalX: goalX,
-        goalY: goalY,
-      ),
+          board: board,
+          advanceOrders: advanceOrders,
+          goalX: goalX,
+          goalY: goalY),
       'Uniform Cost': UniformCost(
-        board: board,
-        advanceOrders: advanceOrders,
-        goalX: goalX,
-        goalY: goalY,
-      ),
+          board: board,
+          advanceOrders: advanceOrders,
+          goalX: goalX,
+          goalY: goalY),
       'Depth First Search': DepthFirstSearch(
-        board: board,
-        advanceOrders: advanceOrders,
-        goalX: goalX,
-        goalY: goalY,
-      ),
+          board: board,
+          advanceOrders: advanceOrders,
+          goalX: goalX,
+          goalY: goalY),
       'Depth Limited Search': DepthFirstSearch(
-        board: board,
-        advanceOrders: advanceOrders,
-        goalX: goalX,
-        goalY: goalY,
-      ),
+          board: board,
+          advanceOrders: advanceOrders,
+          goalX: goalX,
+          goalY: goalY),
     };
 
-    _nodeContex.clear();
-    _nodeContex.add(BaseNode(startX, startY, 0, 0, 0, 0, null));
+    _nodeContext.clear();
+    _nodeContext.add(BaseNode(startX, startY, 0, 0, 0, 0, null));
   }
 
   late final Map<String, SearchAlgorithm> _algorithms;
-  final List<BaseNode> _nodeContex = [];
+  final List<BaseNode> _nodeContext = [];
 
   Future<void> search() async {
     final keysAlgorithm = _algorithms.keys.toList();
-    //keysAlgorithm.shuffle();
+    keysAlgorithm.shuffle();
     print('Order of algorithms: $keysAlgorithm');
     for (var key in keysAlgorithm) {
       onAlgorithmChange(key);
       final algorithm = _algorithms[key]!;
-      algorithm.initAlgorithm(_nodeContex);
+      algorithm.initAlgorithm(_nodeContext, maxIterations);
 
-      // Use maxIterations directly here
-      final newContext = await algorithm.search(renderNode, maxIterations);
+      final newContext = await algorithm.search(renderNode);
 
       if (newContext == null) {
         throw Exception('No solution found');
       }
 
       if (newContext.isNotEmpty) {
-        _nodeContex.clear();
-        _nodeContex.addAll(newContext);
-        print('Context updated with ${_nodeContex.length} nodes');
-        print('new context by $key: $_nodeContex');
+        _nodeContext.clear();
+        _nodeContext.addAll(newContext);
+        print('Context updated with ${_nodeContext.length} nodes');
+        print('new context by $key: $_nodeContext');
         continue;
       }
 
-      _nodeContex.clear();
+      _nodeContext.clear();
       print('Solution found with $key');
       return;
     }
