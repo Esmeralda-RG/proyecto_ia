@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:graphview/GraphView.dart';
-import 'package:proyecto_ia/extensions/node_extension.dart';
+import 'package:proyecto_ia/extensions/graph_extension.dart';
 import 'package:proyecto_ia/models/base_node.dart';
 import 'package:proyecto_ia/controllers/search_algorithm_controller.dart';
 import 'package:proyecto_ia/widgets/iterations_input_prompt.dart';
