@@ -9,7 +9,7 @@ class SearchAlgorithmScreen extends StatelessWidget {
     required this.startY,
     required this.goalX,
     required this.goalY,
-    required this.iterations,  // Recibir el parámetro de iteraciones
+    required this.iterations,
   });
 
   final List<List<int>> board;
@@ -17,7 +17,7 @@ class SearchAlgorithmScreen extends StatelessWidget {
   final int startY;
   final int goalX;
   final int goalY;
-  final int iterations;  // Almacenar las iteraciones
+  final int iterations;
 
   @override
   Widget build(BuildContext context) {
@@ -46,12 +46,12 @@ class SearchAlgorithmScreen extends StatelessWidget {
         goalX: goalX,
         goalY: goalY,
         advanceOrder: [
-          [-1, 0], // Arriba
-          [0, 1], // Derecha
-          [1, 0], // Abajo
-          [0, -1], // Izquierda,
+          [-1, 0],
+          [0, 1],
+          [1, 0],
+          [0, -1],
         ],
-        iterations: iterations,  // Pasar las iteraciones a TreeView
+        iterations: iterations,
         onAlgorithmChange: (String algorithm) {
           selectedAlgorithm.value = algorithm;
         },
@@ -59,4 +59,3 @@ class SearchAlgorithmScreen extends StatelessWidget {
     );
   }
 }
-
