@@ -10,7 +10,7 @@ class SearchAlgorithmController {
       {BaseNode? node,
       bool isGoal,
       bool isKill,
-      List<int> nodeIdsToRemove}) renderNode;
+      Iterable<int> nodeIdsToRemove}) renderNode;
   final Function(String) onAlgorithmChange;
   final int maxIterations;
 

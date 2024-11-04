@@ -23,7 +23,7 @@ abstract class SearchAlgorithm {
               {BaseNode? node,
               bool isGoal,
               bool isKill,
-              List<int> nodeIdsToRemove})
+              Iterable<int> nodeIdsToRemove})
           renderNode);
 
   List<BaseNode> getPath(BaseNode node) {
