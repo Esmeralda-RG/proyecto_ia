@@ -14,11 +14,17 @@ abstract class SearchAlgorithm {
   final int goalX, goalY;
   static final List<int> _orderIndexes = [0];
   static int _levelIterations = 0;
+  late final int maxIterations;
 
   int currentIndex = 0;
 
   Future<List<BaseNode>?> search(
-      Future<void> Function(BaseNode, {bool isGoal, bool isKill}) renderNode);
+      Future<void> Function(
+              {BaseNode? node,
+              bool isGoal,
+              bool isKill,
+              List<int> nodeIdsToRemove})
+          renderNode);
 
   List<BaseNode> getPath(BaseNode node) {
     final List<BaseNode> path = [];
@@ -67,7 +73,8 @@ abstract class SearchAlgorithm {
 
   void initAlgorithm(List<BaseNode> nodes, int maxIterations) {
     setupNodeContext(nodes);
-    _levelIterations += maxIterations;
+    this.maxIterations = maxIterations;
+    _levelIterations += this.maxIterations;
     currentIndex = nodes.map((e) => e.index).reduce(max) + 1;
   }
 

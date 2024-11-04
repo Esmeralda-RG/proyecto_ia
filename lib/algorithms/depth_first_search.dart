@@ -16,12 +16,12 @@ class DepthFirstSearch extends SearchAlgorithm {
   Future<List<BaseNode>?> search(renderNode) async {
     final initialNode = _stack.first;
 
-    await renderNode(initialNode);
+    await renderNode(node: initialNode);
     while (_stack.isNotEmpty) {
       final current = _stack.removeLast();
 
       if (current.x == goalX && current.y == goalY) {
-        await renderNode(current, isGoal: true);
+        await renderNode(node: current, isGoal: true);
         return [];
       }
 
@@ -40,14 +40,14 @@ class DepthFirstSearch extends SearchAlgorithm {
           final neighbor = BaseNode(newX, newY, currentIndex++,
               getCost(current), getHeuristic(newX, newY), level, current);
           neighbors.add(neighbor);
-          await renderNode(neighbor);
+          await renderNode(node: neighbor);
           _temporaryNodes.add(neighbor);
         }
       }
       _stack.addAll(neighbors.reversed);
 
       if (isKill) {
-        await renderNode(current, isKill: true);
+        await renderNode(node: current, isKill: true);
       }
 
       updateNodeIndex(_temporaryNodes.map((n) => n.index), current.index);

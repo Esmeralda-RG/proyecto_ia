@@ -34,12 +34,12 @@ class GreedySearch extends SearchAlgorithm {
   @override
   Future<List<BaseNode>?> search(renderNode) async {
     final initialNode = _queue.first;
-    await renderNode(initialNode);
+    await renderNode(node: initialNode);
     while (_queue.isNotEmpty) {
       Node current = _queue.removeFirst();
 
       if (current.x == goalX && current.y == goalY) {
-        await renderNode(current, isGoal: true);
+        await renderNode(node: current, isGoal: true);
         return [];
       }
       bool isKill = true;
@@ -60,13 +60,13 @@ class GreedySearch extends SearchAlgorithm {
           Node neighbor = Node(newX, newY, currentIndex++, getCost(current),
               getHeuristic(newX, newY), level, order, current);
           _queue.add(neighbor);
-          await renderNode(neighbor);
+          await renderNode(node: neighbor);
           _temporaryNodes.add(neighbor);
         }
       }
 
       if (isKill) {
-        await renderNode(current, isKill: true);
+        await renderNode(node: current, isKill: true);
       }
 
       updateNodeIndex(_temporaryNodes.map((n) => n.index), current.index);

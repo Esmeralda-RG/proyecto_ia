@@ -1,15 +1,16 @@
-import 'package:proyecto_ia/algorithms/breadth_first_search.dart';
-import 'package:proyecto_ia/algorithms/greedy_search.dart';
-import 'package:proyecto_ia/algorithms/uniform_cost.dart';
-import 'package:proyecto_ia/algorithms/depth_first_search.dart';
 import 'package:proyecto_ia/models/base_node.dart';
 import 'package:proyecto_ia/models/search_algorithm.dart';
+import 'package:proyecto_ia/algorithms/algorithms.dart';
 
 class SearchAlgorithmController {
   final List<List<int>> board;
   final List<List<int>> advanceOrders;
   final int startX, startY, goalX, goalY;
-  final Future<void> Function(BaseNode, {bool isGoal, bool isKill}) renderNode;
+  final Future<void> Function(
+      {BaseNode? node,
+      bool isGoal,
+      bool isKill,
+      List<int> nodeIdsToRemove}) renderNode;
   final Function(String) onAlgorithmChange;
   final int maxIterations;
 
@@ -35,7 +36,7 @@ class SearchAlgorithmController {
           advanceOrders: advanceOrders,
           goalX: goalX,
           goalY: goalY),
-      'Uniform Cost': UniformCost(
+      'Uniform Cost Search': UniformCostSearch(
           board: board,
           advanceOrders: advanceOrders,
           goalX: goalX,

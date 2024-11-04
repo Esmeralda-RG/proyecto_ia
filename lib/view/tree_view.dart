@@ -15,7 +15,7 @@ class TreeView extends StatefulWidget {
     required this.startY,
     required this.goalX,
     required this.goalY,
-    required this.iterations,  // Añadir el parámetro de iteraciones
+    required this.iterations,
     required this.onAlgorithmChange,
   });
 
@@ -25,7 +25,7 @@ class TreeView extends StatefulWidget {
   final int startY;
   final int goalX;
   final int goalY;
-  final int iterations;  // Usar las iteraciones desde ConfigScreen
+  final int iterations;
   final ValueChanged<String> onAlgorithmChange;
 
   @override
@@ -46,7 +46,18 @@ class _TreeViewState extends State<TreeView> {
   String goalNodeId = '';
   final List<String> killNodesId = [];
 
-  Future<void> renderNode(BaseNode node, {bool isGoal = false, bool isKill = false}) async {
+  Future<void> renderNode(
+      {BaseNode? node,
+      bool isGoal = false,
+      bool isKill = false,
+      List<int> nodeIdsToRemove = const []}) async {
+    if (node == null) {
+      graph.deleteNodesById(nodeIdsToRemove.map((e) => '$e'));
+      await Future.delayed(Duration(milliseconds: 500));
+      streamController.add(true);
+      return;
+    }
+
     await Future.delayed(Duration(milliseconds: isKill ? 200 : 1000));
 
     if (node.father == null) {
@@ -69,31 +80,30 @@ class _TreeViewState extends State<TreeView> {
   }
 
   @override
-void initState() {
-  super.initState();
-  _algorithmController = SearchAlgorithmController(
-    board: widget.board,
-    advanceOrders: widget.advanceOrder,
-    startX: widget.startX,
-    startY: widget.startY,
-    goalX: widget.goalX,
-    goalY: widget.goalY,
-    maxIterations: widget.iterations,  // Pass the iterations directly
-    onAlgorithmChange: widget.onAlgorithmChange,
-    renderNode: renderNode,
-  );
+  void initState() {
+    super.initState();
+    _algorithmController = SearchAlgorithmController(
+      board: widget.board,
+      advanceOrders: widget.advanceOrder,
+      startX: widget.startX,
+      startY: widget.startY,
+      goalX: widget.goalX,
+      goalY: widget.goalY,
+      maxIterations: widget.iterations,
+      onAlgorithmChange: widget.onAlgorithmChange,
+      renderNode: renderNode,
+    );
 
-  builder
-    ..siblingSeparation = 50
-    ..levelSeparation = 50
-    ..subtreeSeparation = 50
-    ..orientation = BuchheimWalkerConfiguration.ORIENTATION_TOP_BOTTOM;
+    builder
+      ..siblingSeparation = 25
+      ..levelSeparation = 50
+      ..subtreeSeparation = 50
+      ..orientation = BuchheimWalkerConfiguration.ORIENTATION_TOP_BOTTOM;
 
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    executionSearch = _algorithmController.search();
-  });
-}
-
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      executionSearch = _algorithmController.search();
+    });
+  }
 
   @override
   void dispose() {
@@ -124,7 +134,8 @@ void initState() {
           scaleEnabled: false,
           child: GraphView(
             graph: graph,
-            algorithm: BuchheimWalkerAlgorithm(builder, TreeEdgeRenderer(builder)),
+            algorithm:
+                BuchheimWalkerAlgorithm(builder, TreeEdgeRenderer(builder)),
             paint: paint,
             builder: (Node node) {
               final String id = node.id;
@@ -140,8 +151,3 @@ void initState() {
     );
   }
 }
-
-
-
-
-
