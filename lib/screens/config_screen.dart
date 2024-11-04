@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'package:proyecto_ia/models/cell.dart';
 import 'package:proyecto_ia/screens/search_algorithm_screen.dart';
+import 'package:proyecto_ia/screens/file_upload_screen.dart'; // Importar la nueva pantalla
 import 'package:proyecto_ia/widgets/config_board.dart';
 import 'package:proyecto_ia/widgets/custom_button.dart';
 import 'package:proyecto_ia/widgets/dragable_grid.dart';
@@ -14,28 +14,24 @@ class ConfigScreen extends StatefulWidget {
 }
 
 class _ConfigScreenState extends State<ConfigScreen> {
-  late DropzoneViewController dropzoneController;
   CellType cellType = CellType.undefined;
-
   final ValueNotifier<Set<Cell>> selectedCellsNotifier = ValueNotifier<Set<Cell>>({});
   final TextEditingController rowsController = TextEditingController(text: '4');
   final TextEditingController columnsController = TextEditingController(text: '4');
-  final TextEditingController iterationsController = TextEditingController(text: '1'); // Controller para iteraciones
-
+  final TextEditingController iterationsController = TextEditingController(text: '1');
   final ValueNotifier<Cell?> initialPositionNotifier = ValueNotifier<Cell?>(null);
   final ValueNotifier<Cell?> goalPositionNotifier = ValueNotifier<Cell?>(null);
   final List<Cell> walls = [];
   final GlobalKey<FormState> configBoardFormKey = GlobalKey<FormState>();
-
   int rows = 4;
   int columns = 4;
 
-  // Define handleFileDrop function here
-  void handleFileDrop(dynamic event) async {
-    final fileName = await dropzoneController.getFilename(event);
-    final mime = await dropzoneController.getFileMIME(event);
-    print("File dropped: $fileName");
-    print("MIME type: $mime");
+  // Método para abrir la pantalla de carga de archivos
+  void _openFileUploadScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const FileUploadScreen()),
+    );
   }
 
   @override
@@ -124,7 +120,7 @@ class _ConfigScreenState extends State<ConfigScreen> {
                               startY: initialPositionNotifier.value!.column,
                               goalX: goalPositionNotifier.value!.row,
                               goalY: goalPositionNotifier.value!.column,
-                              iterations: int.parse(iterationsController.text),  // Pasar las iteraciones aquí
+                              iterations: int.parse(iterationsController.text),
                             ),
                           ),
                         );
@@ -148,35 +144,9 @@ class _ConfigScreenState extends State<ConfigScreen> {
                         },
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Container(
-                        height: 100,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Stack(
-                          children: [
-                            DropzoneView(
-                              onCreated: (controller) => dropzoneController = controller,
-                              onDrop: handleFileDrop,
-                            ),
-                            Center(
-                              child: Text(
-                                'Arrastra un archivo aquí para cargar',
-                                style: TextStyle(color: Colors.black54),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    DropzoneView(
-                      onCreated: (controller) => dropzoneController = controller,
-                      onDrop: handleFileDrop,
+                    ElevatedButton(
+                      onPressed: _openFileUploadScreen,
+                      child: const Text('Cargar Archivo'),
                     ),
                   ],
                 ),
@@ -320,3 +290,4 @@ class _ConfigScreenState extends State<ConfigScreen> {
     );
   }
 }
+
