@@ -26,13 +26,44 @@ class _ConfigScreenState extends State<ConfigScreen> {
   int rows = 4;
   int columns = 4;
 
-  // Método para abrir la pantalla de carga de archivos
   void _openFileUploadScreen() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const FileUploadScreen()),
+      MaterialPageRoute(
+        builder: (context) => FileUploadScreen(onMatrixLoaded: _loadMatrixFromFile),
+      ),
     );
   }
+
+  void _loadMatrixFromFile(List<List<String>> matrix) {
+  setState(() {
+    walls.clear();
+    initialPositionNotifier.value = null;
+    goalPositionNotifier.value = null;
+
+    for (int row = 0; row < matrix.length; row++) {
+      for (int col = 0; col < matrix[row].length; col++) {
+        if (matrix[row][col] == 'o') {
+          initialPositionNotifier.value = Cell(row, col, 'assets/imgs/mouse.png');
+        } else if (matrix[row][col] == 'x') {
+          goalPositionNotifier.value = Cell(row, col, 'assets/imgs/cheese.png');
+        } else if (matrix[row][col] == '#') {
+          walls.add(Cell(row, col, 'assets/imgs/wall.png'));
+        }
+      }
+    }
+    selectedCellsNotifier.value = {...walls};
+    if (initialPositionNotifier.value != null) {
+      selectedCellsNotifier.value.add(initialPositionNotifier.value!);
+    } else {
+      cellType = CellType.initial;
+    }
+    
+    if (goalPositionNotifier.value != null) {
+      selectedCellsNotifier.value.add(goalPositionNotifier.value!);
+    }
+  });
+}
 
   @override
   Widget build(BuildContext context) {
