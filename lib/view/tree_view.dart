@@ -54,8 +54,8 @@ class _TreeViewState extends State<TreeView> {
       Iterable<int> nodeIdsToRemove = const []}) async {
     
     if (resetTree) {
-      graph.nodes.clear(); // Elimina todos los nodos del gráfico
-      graph.edges.clear(); // Elimina todas las conexiones
+      graph.nodes.clear();
+      graph.edges.clear(); 
       goalNodeId = '';
       killNodesId.clear();
       await Future.delayed(Duration(milliseconds: 500));

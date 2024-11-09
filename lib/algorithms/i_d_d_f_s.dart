@@ -13,7 +13,6 @@ class IterativeDeepeningSearch extends SearchAlgorithm {
   final Queue<BaseNode> _queue = Queue<BaseNode>();
   final List<BaseNode> _temporaryNodes = [];
 
-  // Función para reiniciar la visualización del árbol
   Future<void> resetRenderedNodes(renderNode) async {
     await renderNode(node: null, resetTree: true);
   }
@@ -61,7 +60,6 @@ class IterativeDeepeningSearch extends SearchAlgorithm {
         bool isKill = true;
         _temporaryNodes.clear();
 
-        // Expansión de nodos en el sentido de las manecillas del reloj
         if (current.level < depthLimit) {
           final List<BaseNode> neighbors = [];
           for (var advance in advanceOrders) {
@@ -87,7 +85,6 @@ class IterativeDeepeningSearch extends SearchAlgorithm {
             }
           }
 
-          // Agregar vecinos en orden inverso para mantener el sentido de las manecillas del reloj
           _queue.addAll(neighbors.reversed);
         }
 

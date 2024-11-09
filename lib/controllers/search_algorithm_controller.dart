@@ -26,7 +26,7 @@ class SearchAlgorithmController {
     required this.renderNode,
   }) {
     _algorithms = {
-      'Breadth First Search': BreadthFirstSearch(
+      /*'Breadth First Search': BreadthFirstSearch(
           board: board,
           advanceOrders: advanceOrders,
           goalX: goalX,
@@ -50,7 +50,7 @@ class SearchAlgorithmController {
           board: board,
           advanceOrders: advanceOrders,
           goalX: goalX,
-          goalY: goalY),
+          goalY: goalY),*/
       'Iterative Deepening Depth First Search': IterativeDeepeningSearch(
         board: board,
         advanceOrders: advanceOrders,
