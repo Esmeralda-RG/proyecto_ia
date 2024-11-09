@@ -67,6 +67,9 @@ class UniformCostSearch extends SearchAlgorithm {
       if (isKill) {
         await renderNode(node: current, isKill: true);
       }
+      if (_queue.isEmpty) {
+        return null;
+      }
 
       updateNodeIndex(_temporaryNodes.map((n) => n.index), current.index);
 

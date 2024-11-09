@@ -49,7 +49,9 @@ class DepthFirstSearch extends SearchAlgorithm {
       if (isKill) {
         await renderNode(node: current, isKill: true);
       }
-
+      if (_stack.isEmpty) {
+        return null;
+      }
       updateNodeIndex(_temporaryNodes.map((n) => n.index), current.index);
 
       if (checkMaxIterationsLimit(

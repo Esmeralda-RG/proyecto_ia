@@ -26,7 +26,7 @@ abstract class SearchAlgorithm {
               Iterable<int> nodeIdsToRemove})
           renderNode);
 
-  List<BaseNode> getPath(BaseNode node) {
+  static List<BaseNode> getPath(BaseNode node) {
     final List<BaseNode> path = [];
     BaseNode? current = node;
     while (current != null) {
@@ -36,7 +36,7 @@ abstract class SearchAlgorithm {
     return path.reversed.toList();
   }
 
-  String getPathString(BaseNode? node) {
+  static String getPathString(BaseNode? node) {
     if (node == null) {
       return 'No path found';
     }

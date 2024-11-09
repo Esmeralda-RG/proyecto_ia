@@ -9,7 +9,7 @@ class ConfigScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    CellType cellType = CellType.undefined;
+    final ValueNotifier<CellType> cellType = ValueNotifier(CellType.undefined);
     final configBoardFormKey = GlobalKey<FormState>();
     final size = MediaQuery.of(context).size;
     final configState = ConfigurationProvider.of(context);
@@ -94,16 +94,20 @@ class ConfigScreen extends StatelessWidget {
               ),
             ),
           ),
-          Column(
-            children: [
-              ConfigBoard(cellType: cellType),
-              ConfigCellTypeWidget(
-                  cellType: cellType,
-                  onCellTypeChanged: (value) {
-                    cellType = value;
-                  })
-            ],
-          ),
+          ValueListenableBuilder(
+              valueListenable: cellType,
+              builder: (context, value, _) {
+                return Column(
+                  children: [
+                    ConfigBoard(cellType: value),
+                    ConfigCellTypeWidget(
+                        cellType: value,
+                        onCellTypeChanged: (value) {
+                          cellType.value = value;
+                        })
+                  ],
+                );
+              }),
         ],
       ),
     );

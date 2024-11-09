@@ -11,10 +11,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Proyecto IA',
-      home: ConfigurationProvider(child: ConfigScreen()),
-      debugShowCheckedModeBanner: false,
+    return ConfigurationProvider(
+      child: MaterialApp(
+        title: 'Proyecto IA',
+        home: ConfigScreen(),
+        debugShowCheckedModeBanner: false,
+      ),
     );
   }
 }

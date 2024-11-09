@@ -51,8 +51,11 @@ class BreadthFirstSearch extends SearchAlgorithm {
         await renderNode(node: current, isKill: true);
       }
 
-      updateNodeIndex(_temporaryNodes.map((n) => n.index), current.index);
+      if (_queue.isEmpty) {
+        return null;
+      }
 
+      updateNodeIndex(_temporaryNodes.map((n) => n.index), current.index);
       orderNodesByLevel(orderNodes(_queue.toList()));
 
       if (checkMaxIterationsLimit(

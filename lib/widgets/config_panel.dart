@@ -16,7 +16,7 @@ class ConfigPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final configState = ConfigurationProvider.of(context);
-    final maxIterationsController = configState.maxIterationsController;
+    final iterationController = configState.iterationsController;
     final rowsController = configState.rowsController;
     final columnsController = configState.columnsController;
     final selectedCellsNotifier = configState.selectedCellsNotifier;
@@ -34,7 +34,7 @@ class ConfigPanel extends StatelessWidget {
             TextFormField(
               textInputAction: TextInputAction.next,
               keyboardType: TextInputType.number,
-              controller: maxIterationsController,
+              controller: iterationController,
               validator: validateNumber,
               decoration: const InputDecoration(
                 labelText: 'Maximo de iteraciones',
@@ -89,7 +89,7 @@ class ConfigPanel extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => FileUploadScreen()),
+                  MaterialPageRoute(builder: (_) => FileUploadScreen()),
                 );
               },
               child: const Text('Cargar Archivo'),

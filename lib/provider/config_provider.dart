@@ -13,8 +13,6 @@ class ConfigurationProvider extends InheritedWidget {
   final TextEditingController columnsController =
       TextEditingController(text: '4');
   final TextEditingController iterationsController =
-      TextEditingController(text: '1');
-  final TextEditingController maxIterationsController =
       TextEditingController(text: '2');
   final ValueNotifier<Cell?> initialPositionNotifier = ValueNotifier(null);
   final ValueNotifier<Cell?> goalPositionNotifier = ValueNotifier(null);

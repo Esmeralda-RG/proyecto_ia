@@ -45,6 +45,7 @@ class _TreeViewState extends State<TreeView> {
 
   String goalNodeId = '';
   final List<String> killNodesId = [];
+  final List<String> pathNodesId = [];
 
   Future<void> renderNode(
       {BaseNode? node,
@@ -70,6 +71,9 @@ class _TreeViewState extends State<TreeView> {
 
     if (isGoal) {
       goalNodeId = '${node.index}';
+      _algorithmController.getPath(node).forEach((element) {
+        pathNodesId.add('${element.index}');
+      });
     }
 
     if (isKill) {
@@ -92,17 +96,31 @@ class _TreeViewState extends State<TreeView> {
       maxIterations: widget.iterations,
       onAlgorithmChange: widget.onAlgorithmChange,
       renderNode: renderNode,
+      onError: message,
     );
 
     builder
       ..siblingSeparation = 25
-      ..levelSeparation = 50
-      ..subtreeSeparation = 50
+      ..levelSeparation = 30
+      ..subtreeSeparation = 25
       ..orientation = BuchheimWalkerConfiguration.ORIENTATION_TOP_BOTTOM;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      executionSearch = _algorithmController.search();
-    });
+    executionSearch = _algorithmController.search();
+  }
+
+  void message(String message) {
+    showAdaptiveDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text('Error'),
+              content: Text(message),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('Ok'),
+                ),
+              ],
+            ));
   }
 
   @override
@@ -143,6 +161,7 @@ class _TreeViewState extends State<TreeView> {
                 node.value,
                 isGoal: goalNodeId == id,
                 isKill: killNodesId.contains(id),
+                usePath: pathNodesId.contains(id),
               );
             },
           ),
