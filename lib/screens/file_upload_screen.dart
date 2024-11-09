@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
 
 class FileUploadScreen extends StatefulWidget {
-  const FileUploadScreen({Key? key}) : super(key: key);
+  const FileUploadScreen({super.key});
 
   @override
   State<FileUploadScreen> createState() => _FileUploadScreenState();

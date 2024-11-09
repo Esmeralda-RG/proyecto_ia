@@ -51,6 +51,12 @@ class SearchAlgorithmController {
           advanceOrders: advanceOrders,
           goalX: goalX,
           goalY: goalY),
+      'Iterative Deepening Depth First Search': IterativeDeepeningSearch(
+        board: board,
+        advanceOrders: advanceOrders,
+        goalX: goalX,
+        goalY: goalY,
+      )
     };
 
     _nodeContext.clear();
@@ -68,6 +74,7 @@ class SearchAlgorithmController {
       onAlgorithmChange(key);
       final algorithm = _algorithms[key]!;
       algorithm.initAlgorithm(_nodeContext, maxIterations);
+      print('Iniciando algoritmo con maxIterations: $maxIterations');
 
       final newContext = await algorithm.search(renderNode);
 
