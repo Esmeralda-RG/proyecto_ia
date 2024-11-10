@@ -30,16 +30,14 @@ class IterativeDeepeningSearch extends SearchAlgorithm {
         return [];
       }
 
-      if (_stack.isEmpty && current.level == lastLevel) {
-        depth = 0;
-        maxDepth++;
-        _stack.addAll(_rootNodes);
-        await renderNode(nodeIdsToRemove: _nodesIndexRemoved);
-        _nodesIndexRemoved.clear();
-        continue;
-      }
-
       if (depth == maxDepth && current.level >= lastLevel) {
+        if (_stack.isEmpty) {
+          depth = 0;
+          maxDepth++;
+          _stack.addAll(_rootNodes);
+          await renderNode(nodeIdsToRemove: _nodesIndexRemoved);
+          _nodesIndexRemoved.clear();
+        }
         continue;
       }
 
