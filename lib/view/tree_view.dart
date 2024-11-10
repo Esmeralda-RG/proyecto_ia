@@ -51,7 +51,18 @@ class _TreeViewState extends State<TreeView> {
       {BaseNode? node,
       bool isGoal = false,
       bool isKill = false,
+      bool resetTree = false,
       Iterable<int> nodeIdsToRemove = const []}) async {
+    
+    if (resetTree) {
+      graph.nodes.clear();
+      graph.edges.clear(); 
+      goalNodeId = '';
+      killNodesId.clear();
+      await Future.delayed(Duration(milliseconds: 500));
+      streamController.add(true);
+      return;
+    }
     if (node == null) {
       graph.deleteNodesById(nodeIdsToRemove.map((e) => '$e'));
       await Future.delayed(Duration(milliseconds: 500));
@@ -144,6 +155,10 @@ class _TreeViewState extends State<TreeView> {
           return Center(
             child: Text('Error: ${snapshot.error}'),
           );
+        }
+
+        if (graph.nodes.isEmpty) {
+          return Center(child: Text("No hay nodos para mostrar"));
         }
 
         return InteractiveViewer(

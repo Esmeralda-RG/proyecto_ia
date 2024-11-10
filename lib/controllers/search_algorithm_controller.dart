@@ -51,7 +51,13 @@ class SearchAlgorithmController {
           board: board,
           advanceOrders: advanceOrders,
           goalX: goalX,
-          goalY: goalY),
+          goalY: goalY),*/
+      'Iterative Deepening Depth First Search': IterativeDeepeningSearch(
+        board: board,
+        advanceOrders: advanceOrders,
+        goalX: goalX,
+        goalY: goalY,
+      )
     };
 
     _nodeContext.clear();
