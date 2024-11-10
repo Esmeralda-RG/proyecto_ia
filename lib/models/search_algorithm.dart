@@ -73,21 +73,20 @@ abstract class SearchAlgorithm {
 
   void initAlgorithm(List<BaseNode> nodes, int maxIterations) {
     setupNodeContext(nodes);
-    this.maxIterations = maxIterations;
-    _levelIterations += this.maxIterations;
+    _levelIterations += maxIterations;
+    this.maxIterations = _levelIterations;
     currentIndex = nodes.map((e) => e.index).reduce(max) + 1;
   }
 
   void updateNodeIndex(Iterable<int> nodes, int indexFather) {
-  int index = _orderIndexes.indexOf(indexFather);
+    int index = _orderIndexes.indexOf(indexFather);
 
-  if (index == -1) {
-    _orderIndexes.addAll(nodes);
-  } else {
-    _orderIndexes.replaceRange(index, index + 1, nodes);
+    if (index == -1) {
+      _orderIndexes.addAll(nodes);
+    } else {
+      _orderIndexes.replaceRange(index, index + 1, nodes);
+    }
   }
-}
-
 
   List<BaseNode> orderNodes(List<BaseNode> nodes) {
     List<BaseNode> orderedNodes = [];

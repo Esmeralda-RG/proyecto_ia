@@ -32,7 +32,7 @@ class SearchAlgorithmController {
           advanceOrders: advanceOrders,
           goalX: goalX,
           goalY: goalY),
-      'Breadth First Search': BreadthFirstSearch(
+      /* 'Breadth First Search': BreadthFirstSearch(
           board: board,
           advanceOrders: advanceOrders,
           goalX: goalX,

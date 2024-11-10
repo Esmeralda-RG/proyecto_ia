@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:graphview/GraphView.dart';
-import 'package:proyecto_ia/extensions/graph_extension.dart';
 import 'package:proyecto_ia/models/base_node.dart';
-import 'package:proyecto_ia/controllers/search_algorithm_controller.dart';
 import 'package:proyecto_ia/widgets/node_widget.dart';
+import 'package:proyecto_ia/extensions/graph_extension.dart';
+import 'package:proyecto_ia/controllers/search_algorithm_controller.dart';
 
 class TreeView extends StatefulWidget {
   const TreeView({
@@ -51,21 +51,9 @@ class _TreeViewState extends State<TreeView> {
       {BaseNode? node,
       bool isGoal = false,
       bool isKill = false,
-      bool resetTree = false,
       Iterable<int> nodeIdsToRemove = const []}) async {
-    
-    if (resetTree) {
-      graph.nodes.clear();
-      graph.edges.clear(); 
-      goalNodeId = '';
-      killNodesId.clear();
-      await Future.delayed(Duration(milliseconds: 500));
-      streamController.add(true);
-      return;
-    }
     if (node == null) {
       graph.deleteNodesById(nodeIdsToRemove.map((e) => '$e'));
-      await Future.delayed(Duration(milliseconds: 500));
       streamController.add(true);
       return;
     }
