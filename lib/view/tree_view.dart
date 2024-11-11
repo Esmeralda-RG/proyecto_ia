@@ -58,8 +58,6 @@ class _TreeViewState extends State<TreeView> {
       return;
     }
 
-    await Future.delayed(Duration(milliseconds: isKill ? 200 : 1000));
-
     if (node.father == null) {
       graph.addNode(Node.Id('${node.index}')..addValue(node));
     } else {
@@ -79,6 +77,7 @@ class _TreeViewState extends State<TreeView> {
       killNodesId.add('${node.index}');
     }
 
+    await Future.delayed(Duration(milliseconds: isKill ? 200 : 1000));
     streamController.add(true);
   }
 
