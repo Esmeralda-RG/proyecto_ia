@@ -3,7 +3,7 @@ import 'dart:convert' show utf8;
 import 'package:flutter/material.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'package:proyecto_ia/provider/config_provider.dart';
-import 'package:proyecto_ia/utils/validate_number.dart';
+import 'package:proyecto_ia/widgets/file_uploader_to_board.dart';
 
 class FileUploadScreen extends StatefulWidget {
   const FileUploadScreen({super.key});
@@ -83,59 +83,11 @@ class _FileUploadScreenState extends State<FileUploadScreen> {
                       border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: FileUploaderToBoard(),
+                    child: FileUploaderToBoard(formKey: GlobalKey<FormState>()),
                   ),
                 ),
         ],
       ),
     );
-  }
-}
-
-class FileUploaderToBoard extends StatelessWidget {
-  const FileUploaderToBoard({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final formKey = GlobalKey<FormState>();
-    final characterWall = TextEditingController();
-    final characterInitial = TextEditingController();
-    final characterGoal = TextEditingController();
-    final maxIterationsController = TextEditingController();
-
-    return Form(
-        key: formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              TextFormField(
-                controller: characterWall,
-                decoration: const InputDecoration(
-                  labelText: '¿Con qué caracter se representan los muros?',
-                ),
-              ),
-              TextFormField(
-                controller: characterInitial,
-                decoration: const InputDecoration(
-                  labelText:
-                      '¿Con qué caracter o dónde está la posición inicial?',
-                ),
-              ),
-              TextFormField(
-                controller: characterGoal,
-                decoration: const InputDecoration(
-                  labelText: '¿Con qué caracter o dónde está la meta?',
-                ),
-              ),
-              TextFormField(
-                  controller: maxIterationsController,
-                  decoration: const InputDecoration(
-                    labelText: 'Número máximo de iteraciones',
-                  ),
-                  validator: validateNumber),
-            ],
-          ),
-        ));
   }
 }

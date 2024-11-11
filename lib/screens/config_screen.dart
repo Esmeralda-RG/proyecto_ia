@@ -10,8 +10,9 @@ class ConfigScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ValueNotifier<CellType> cellType = ValueNotifier(CellType.undefined);
-    final configBoardFormKey = GlobalKey<FormState>();
     final size = MediaQuery.of(context).size;
+    final configBoardFormKey = GlobalKey<FormState>();
+
     final configState = ConfigurationProvider.of(context);
     final rowsController = configState.rowsController;
     final columnsController = configState.columnsController;
@@ -19,6 +20,7 @@ class ConfigScreen extends StatelessWidget {
     final initialPositionNotifier = configState.initialPositionNotifier;
     final goalPositionNotifier = configState.goalPositionNotifier;
     final walls = configState.walls;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Proyecto IA'),
