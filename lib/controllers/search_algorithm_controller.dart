@@ -71,8 +71,6 @@ class SearchAlgorithmController {
     try {
       final keysAlgorithm = _algorithms.keys.toList();
       keysAlgorithm.shuffle();
-      print('Order of algorithms: $keysAlgorithm');
-      print('Max iterations: $maxIterations');
       for (var key in keysAlgorithm) {
         onAlgorithmChange(key);
         final algorithm = _algorithms[key]!;
@@ -88,8 +86,6 @@ class SearchAlgorithmController {
         if (newContext.isNotEmpty) {
           _nodeContext.clear();
           _nodeContext.addAll(newContext);
-          print('Context updated with ${_nodeContext.length} nodes');
-          print('new context by $key: $_nodeContext');
           continue;
         }
 
