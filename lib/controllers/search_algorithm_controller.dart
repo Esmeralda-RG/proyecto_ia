@@ -32,7 +32,7 @@ class SearchAlgorithmController {
           advanceOrders: advanceOrders,
           goalX: goalX,
           goalY: goalY),
-      /* 'Breadth First Search': BreadthFirstSearch(
+      'Breadth First Search': BreadthFirstSearch(
           board: board,
           advanceOrders: advanceOrders,
           goalX: goalX,
@@ -51,8 +51,8 @@ class SearchAlgorithmController {
           board: board,
           advanceOrders: advanceOrders,
           goalX: goalX,
-          goalY: goalY),*/
-      'Iterative Deepening Depth First Search': IterativeDeepeningSearch(
+          goalY: goalY),
+      'Iterative Deepening Depth First Search': IterativeDepthSearch(
         board: board,
         advanceOrders: advanceOrders,
         goalX: goalX,
@@ -70,7 +70,7 @@ class SearchAlgorithmController {
   Future<void> search() async {
     try {
       final keysAlgorithm = _algorithms.keys.toList();
-      //keysAlgorithm.shuffle();
+      keysAlgorithm.shuffle();
       print('Order of algorithms: $keysAlgorithm');
       print('Max iterations: $maxIterations');
       for (var key in keysAlgorithm) {

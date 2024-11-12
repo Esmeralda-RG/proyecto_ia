@@ -1,8 +1,8 @@
 import 'package:proyecto_ia/models/base_node.dart';
 import 'package:proyecto_ia/models/search_algorithm.dart';
 
-class IterativeDeepeningSearch extends SearchAlgorithm {
-  IterativeDeepeningSearch({
+class IterativeDepthSearch extends SearchAlgorithm {
+  IterativeDepthSearch({
     required super.board,
     required super.advanceOrders,
     required super.goalX,
