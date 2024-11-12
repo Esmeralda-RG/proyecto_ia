@@ -30,6 +30,7 @@ class UniformCostSearch extends SearchAlgorithm {
 
   final PriorityQueue<Node> _queue = PriorityQueue<Node>();
   final List<BaseNode> _temporaryNodes = [];
+  int _lastOrder = 0;
 
   @override
   Future<List<BaseNode>?> search(renderNode) async {
@@ -55,9 +56,8 @@ class UniformCostSearch extends SearchAlgorithm {
 
         if (isValid(newX, newY) && !isGrandparent) {
           isKill = false;
-          int order = current.order + 1;
           final neighbor = Node(newX, newY, currentIndex++, getCost(current),
-              getHeuristic(newX, newY), level, order, current);
+              getHeuristic(newX, newY), level, _lastOrder++, current);
           _queue.add(neighbor);
           await renderNode(node: neighbor);
           _temporaryNodes.add(neighbor);
@@ -88,6 +88,7 @@ class UniformCostSearch extends SearchAlgorithm {
     for (var i = 0; i < nodes.length; i++) {
       final node = Node(nodes[i].x, nodes[i].y, nodes[i].index, nodes[i].cost,
           nodes[i].heuristic, nodes[i].level, i, nodes[i].father);
+      _lastOrder = i;
       _queue.add(node);
     }
   }

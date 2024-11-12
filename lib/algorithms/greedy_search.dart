@@ -23,6 +23,7 @@ class Node extends BaseNode implements Comparable<Node> {
 class GreedySearch extends SearchAlgorithm {
   final PriorityQueue<Node> _queue = PriorityQueue<Node>();
   final List<BaseNode> _temporaryNodes = [];
+  int _lastOrder = 0;
 
   GreedySearch({
     required super.board,
@@ -56,9 +57,8 @@ class GreedySearch extends SearchAlgorithm {
         }
         if (isValid(newX, newY)) {
           isKill = false;
-          int order = current.order + 1;
           Node neighbor = Node(newX, newY, currentIndex++, getCost(current),
-              getHeuristic(newX, newY), level, order, current);
+              getHeuristic(newX, newY), level, _lastOrder++, current);
           _queue.add(neighbor);
           await renderNode(node: neighbor);
           _temporaryNodes.add(neighbor);
@@ -87,6 +87,7 @@ class GreedySearch extends SearchAlgorithm {
     for (var i = 0; i < nodes.length; i++) {
       final node = Node(nodes[i].x, nodes[i].y, nodes[i].index, nodes[i].cost,
           nodes[i].heuristic, nodes[i].level, i, nodes[i].father);
+      _lastOrder = i;
       _queue.add(node);
     }
   }
