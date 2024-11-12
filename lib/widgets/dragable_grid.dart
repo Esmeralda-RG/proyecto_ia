@@ -26,7 +26,6 @@ class _DragableGridState extends State<DragableGrid> {
 
   @override
   void initState() {
-    print('initState');
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _centerGrid());
   }
