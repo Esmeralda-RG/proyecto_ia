@@ -16,6 +16,7 @@ class _FileUploadScreenState extends State<FileUploadScreen> {
   late DropzoneViewController dropzoneController;
   late final ConfigurationProvider? configState;
   String fileContent = '';
+  final List<String> fileContentList = [];
 
   void message(String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -30,10 +31,22 @@ class _FileUploadScreenState extends State<FileUploadScreen> {
       return;
     }
     final data = await dropzoneController.getFileData(event);
-    final content = utf8.decode(data);
-    setState(() {
-      fileContent = content;
-    });
+    fileContent = utf8.decode(data);
+    final List<String> validLines = fileContent
+        .replaceAll(' ', '')
+        .split('\n')
+        .map((element) => element.trim())
+        .where((element) => element.isNotEmpty)
+        .toList();
+
+    if (validLines.length < 2) {
+      message('El archivo debe tener al menos dimesiones 2 x 2');
+      return;
+    }
+
+    fileContentList.clear();
+    fileContentList.addAll(validLines);
+    setState(() {});
   }
 
   @override
@@ -83,7 +96,11 @@ class _FileUploadScreenState extends State<FileUploadScreen> {
                       border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: FileUploaderToBoard(formKey: GlobalKey<FormState>()),
+                    child: FileUploaderToBoard(
+                      formKey: GlobalKey<FormState>(),
+                      fileContent: fileContent,
+                      fileContentList: fileContentList,
+                    ),
                   ),
                 ),
         ],
