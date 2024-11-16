@@ -3,6 +3,7 @@
 ## Integrantes
 
 - Jota E. López - 2259394
+- Esmeralda Rivas Guzmán - 2259580
 
 ### Instalación
 
@@ -26,6 +27,7 @@ flutter run
 Este proyecto implementa varios algoritmos de búsqueda clásica en grafos, adaptados para trabajar de manera integrada, los algoritmos que se incluyen son:  
 
 - **Búsqueda en Profundidad**  
+- **Búsqueda en Profundidad Limitada**
 - **Búsqueda en Profundidad Iterativa**  
 - **Búsqueda en Amplitud**  
 - **Búsqueda de Costo Uniforme**  
