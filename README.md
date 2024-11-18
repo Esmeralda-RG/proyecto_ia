@@ -5,6 +5,7 @@
 - Pedro Bernal Londoño - 2259548
 - Jota E. López - 2259394
 - Esmeralda Rivas Guzmán - 2259580
+- Brian Esteban Gonzalez - 2159812
 
 ### Instalación
 
